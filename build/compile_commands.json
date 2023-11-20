@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++ -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB  -g -o CMakeFiles/Signal.dir/source/main.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/main.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/main.cpp",
+  "output": "CMakeFiles/Signal.dir/source/main.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++ -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB  -g -o CMakeFiles/Signal.dir/source/FileManager/FileManager.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/FileManager/FileManager.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/FileManager/FileManager.cpp",
+  "output": "CMakeFiles/Signal.dir/source/FileManager/FileManager.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++ -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB  -g -o CMakeFiles/Signal.dir/source/Config/Config.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/Config/Config.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/Config/Config.cpp",
+  "output": "CMakeFiles/Signal.dir/source/Config/Config.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++ -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB  -g -o CMakeFiles/Signal.dir/source/Filter/Filter.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/Filter/Filter.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/Filter/Filter.cpp",
+  "output": "CMakeFiles/Signal.dir/source/Filter/Filter.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++ -DBOOST_PROGRAM_OPTIONS_DYN_LINK -DBOOST_PROGRAM_OPTIONS_NO_LIB  -g -o CMakeFiles/Signal.dir/source/ImageFilter/ImageFilter.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/ImageFilter/ImageFilter.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/ImageFilter/ImageFilter.cpp",
+  "output": "CMakeFiles/Signal.dir/source/ImageFilter/ImageFilter.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Image.dir/source/main.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/main.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/main.cpp",
+  "output": "CMakeFiles/Image.dir/source/main.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Image.dir/source/FileManager/FileManager.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/FileManager/FileManager.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/FileManager/FileManager.cpp",
+  "output": "CMakeFiles/Image.dir/source/FileManager/FileManager.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Image.dir/source/Config/Config.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/Config/Config.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/Config/Config.cpp",
+  "output": "CMakeFiles/Image.dir/source/Config/Config.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Image.dir/source/Filter/Filter.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/Filter/Filter.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/Filter/Filter.cpp",
+  "output": "CMakeFiles/Image.dir/source/Filter/Filter.cpp.o"
+},
+{
+  "directory": "/home/kajtekk/Documents/inzynierka/SignalNaive/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/Image.dir/source/ImageFilter/ImageFilter.cpp.o -c /home/kajtekk/Documents/inzynierka/SignalNaive/source/ImageFilter/ImageFilter.cpp",
+  "file": "/home/kajtekk/Documents/inzynierka/SignalNaive/source/ImageFilter/ImageFilter.cpp",
+  "output": "CMakeFiles/Image.dir/source/ImageFilter/ImageFilter.cpp.o"
+}
+]
