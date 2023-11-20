@@ -1,3 +1,3 @@
-Execute from main directory:
-    to build the project: ./scripts/build.sh
-    to run the project: ./scripts/run.sh
+Execute from main directory:\
+\t to build the project: ./scripts/build.sh\
+\t to run the project: ./scripts/run.sh\
