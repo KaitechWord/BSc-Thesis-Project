@@ -1,4 +1,0 @@
-/home/kajtekk/Documents/inzynierka/SignalNaive/build/CMakeFiles/Signal.dir
-/home/kajtekk/Documents/inzynierka/SignalNaive/build/CMakeFiles/Image.dir
-/home/kajtekk/Documents/inzynierka/SignalNaive/build/CMakeFiles/edit_cache.dir
-/home/kajtekk/Documents/inzynierka/SignalNaive/build/CMakeFiles/rebuild_cache.dir
