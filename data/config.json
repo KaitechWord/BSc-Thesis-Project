@@ -1,0 +1,12 @@
+{
+    "SignalFilter": {
+                        "Variant": "MIN",
+                        "Approach": "NAIVE",
+                        "DataPath": "./data/signal.txt"
+                    },
+    "ImageFilter": {
+                        "Variant": "MIN",
+                        "Approach": "NAIVE",
+                        "DataPath": "./data/image.png"
+                    }
+}
