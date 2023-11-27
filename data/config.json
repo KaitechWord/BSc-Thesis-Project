@@ -1,12 +1,15 @@
 {
+    "ThreadsNumber": 4,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
-                        "DataPath": "./data/signal.txt"
+                        "DataPath": "./data/signal.txt",
+                        "MaskSize": 5
                     },
     "ImageFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
-                        "DataPath": "./data/image.png"
+                        "DataPath": "./data/image.png",
+                        "MaskSideSize": 3
                     }
 }

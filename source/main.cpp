@@ -2,11 +2,13 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cctype>
+#include <filesystem>
 #include "FileManager/FileManager.h"
 #include "Config/Config.h"
 #include "Config/FilterInfo.h"
 
 Config &config = Config::instance("./data/config.json");
+
 //TODO:
 // There gonna be two apps(two projects in cmake)
 // One for Signal algorithms
