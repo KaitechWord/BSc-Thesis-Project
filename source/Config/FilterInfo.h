@@ -1,9 +1,11 @@
 #pragma once
 #include <string>
+#include "../Filter/Filter.h"
 
 struct FilterInfo{
-    std::string variant;
-    std::string approach;
+    int threadsNum;
+    AlgorithmType variant;
+    FilterApproach approach;
     std::string dataPath;
     int maskSize;
 };

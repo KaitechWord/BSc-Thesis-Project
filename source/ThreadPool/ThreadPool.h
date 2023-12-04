@@ -7,7 +7,7 @@
 
 class ThreadPool{
     public:
-        Threadpool(int threadsNum);
+        ThreadPool(int threadsNum);
         void start();
         void queueJob(const std::function<void()>& job);
         void stop();
@@ -19,6 +19,7 @@ class ThreadPool{
         bool shouldTerminate = false;           // Tells threads to stop looking for jobs
         std::mutex queueM;                  // Prevents data races to the job queue
         std::condition_variable mutexCond; // Allows threads to wait on new jobs or termination 
+        std::condition_variable idleCond;
         std::vector<std::thread> threads;
         std::queue<std::function<void()>> jobs;
 };

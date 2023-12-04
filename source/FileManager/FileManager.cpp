@@ -26,15 +26,27 @@ void FileManager::loadSignalFromFile(const std::string &fileName){
     std::string line;
     while(std::getline(this->inputSignalFile, line)){
         std::stringstream lineS(line);
-        std::string word;
-        while(lineS >> word){
-            signal.push_back(std::stoi(word));
+        int number;
+        while(lineS >> number){
+            signal.push_back(number);
         }
     }
 }
 
-void FileManager::getLoadedSignal(std::vector<int> &signals){
-    signals = this->signal; 
+void FileManager::getLoadedSignal(Signal &signal){
+    int signalSize = this->signal.size();
+    signal.setSize(signalSize);
+    for(int i = 0; i < signalSize; i++){
+        signal[i] = this->signal[i];
+    }
+}
+
+void FileManager::saveSignalToFile(const Signal &signal, const std::string& fileName) {
+    this->openFile(fileName, FileType::OUTPUT_FILE);
+    // Write each element of the array to the file
+    for (int i = 0; i < signal.getSize(); i++) {
+        this->outputSignalFile << signal[i] << " ";
+    }
 }
 
 FileManager::~FileManager(){

@@ -4,8 +4,10 @@
 #include <cctype>
 #include <filesystem>
 #include "FileManager/FileManager.h"
-#include "Config/Config.h"
-#include "Config/FilterInfo.h"
+#include "./Config/Config.h"
+#include "./Config/FilterInfo.h"
+#include "./Signal/Signal.h"
+#include "./NaiveSignalFilter/NaiveSignalFilter.h"
 
 Config &config = Config::instance("./data/config.json");
 
@@ -21,10 +23,12 @@ Config &config = Config::instance("./data/config.json");
 int main(int argc, char *argv[]){
     FilterInfo signalInfo, imageInfo;
     config.getInfo(signalInfo, InfoToRead::SIGNAL);
-    config.getInfo(imageInfo, InfoToRead::IMAGE);
     FileManager fileManager;
     fileManager.loadSignalFromFile(signalInfo.dataPath);
-    std::vector<int> signal;
+    Signal signal;
     fileManager.getLoadedSignal(signal);
+    NaiveSignalFilter NSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
+    NSF.apply(signal);
+    fileManager.saveSignalToFile(signal, "../../data/yikes.txt");
     return 0;
 }

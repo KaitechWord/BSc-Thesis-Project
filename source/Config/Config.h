@@ -21,6 +21,6 @@ class Config{
         FilterInfo info;
         Config(const std::string &filePath);
         ~Config();
-        void verifyInfo(FilterInfo &filterInfo);
+        void verifyInfo(FilterInfo &filterInfo, std::string &variant, std::string &approach);
         boost::property_tree::ptree pt;
 };

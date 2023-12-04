@@ -1,11 +1,11 @@
 #include "Threadpool.h"
 
-ThreadPool::Threadpool(int threadsNum)
+ThreadPool::ThreadPool(int threadsNum)
     : threadsNum(threadsNum)
 {}
 
 void ThreadPool::start(){
-    for (int i = 0; i < threadsNum; ++ii) {
+    for (int i = 0; i < threadsNum; ++i) {
         threads.emplace_back(std::thread(&ThreadPool::threadLoop, this));
     }
 }
@@ -51,7 +51,7 @@ void ThreadPool::threadLoop(){
             if (this->shouldTerminate) {
                 return;
             }
-            this->job = jobs.front();
+            job = jobs.front();
             jobs.pop();
         }
         job();

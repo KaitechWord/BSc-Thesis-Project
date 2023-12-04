@@ -1,5 +1,6 @@
 #include "Signal.h"
 #include <stdexcept>
+#include <string>
 
 Signal::Signal()
     : size(0), data(nullptr)
@@ -19,10 +20,26 @@ Signal& Signal::operator=(const Signal &signal){
     } else {
         return *this;
     }
-    this->data = new int[signal.size];
-    for(int i = 0; i < signal.size; i++){
+    this->size = signal.size;
+    this->data = new int[this->size];
+    for(int i = 0; i < this->size; i++){
         this->data[i] = signal.data[i];
     }
+    return *this;
+}
+
+int Signal::operator[](int i) const{
+    if(i < 0 || i >= this->size){
+        throw new std::runtime_error("Index " + std::to_string(i) + " is out of bounds. Max. size: " + std::to_string(this->size));
+    }
+    return this->data[i];
+}
+
+int& Signal::operator[](int i){
+    if(i < 0 || i >= this->size){
+        throw new std::runtime_error("Index " + std::to_string(i) + " is out of bounds. Max. size: " + std::to_string(this->size));
+    }
+    return this->data[i];
 }
 
 void Signal::setSignal(int *data){
@@ -31,6 +48,8 @@ void Signal::setSignal(int *data){
 }
 
 void Signal::setSize(int size){
+    delete[] this->data;
+    this->data = new int[size]; 
     this->size = size;
 }
 
