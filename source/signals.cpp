@@ -9,7 +9,7 @@
 #include "./Signal/Signal.h"
 #include "./NaiveSignalFilter/NaiveSignalFilter.h"
 
-Config &config = Config::instance("./data/config.json");
+Config &config = Config::instance("../../../data/config.json");
 
 //TODO:
 // There gonna be two apps(two projects in cmake)
@@ -29,6 +29,6 @@ int main(int argc, char *argv[]){
     fileManager.getLoadedSignal(signal);
     NaiveSignalFilter NSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
     NSF.apply(signal);
-    fileManager.saveSignalToFile(signal, "../../data/yikes.txt");
+    fileManager.saveSignalToFile(signal, "./yikes.txt");
     return 0;
 }

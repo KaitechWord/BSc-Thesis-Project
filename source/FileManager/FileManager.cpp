@@ -5,14 +5,14 @@
 
 void FileManager::openFile(const std::string &fileName, FileType fileType){
     if(fileType == FileType::INPUT_FILE){
-        inputSignalFile.open(fileName);
+        inputSignalFile.open(fileName, std::ifstream::in);
     } else{
-        outputSignalFile.open(fileName);
+        outputSignalFile.open(fileName, std::ifstream::out);
     }
     try{
-        if(inputSignalFile.is_open() && fileType == FileType::INPUT_FILE){
+        if(this->inputSignalFile.is_open() && fileType == FileType::INPUT_FILE){
             return;
-        } else if(inputSignalFile.is_open() && fileType == FileType::OUTPUT_FILE){
+        } else if(this->outputSignalFile.is_open() && fileType == FileType::OUTPUT_FILE){
             return;
         }
         throw std::runtime_error("Couldn't open file. Provided file path: " + fileName);
@@ -34,18 +34,13 @@ void FileManager::loadSignalFromFile(const std::string &fileName){
 }
 
 void FileManager::getLoadedSignal(Signal &signal){
-    int signalSize = this->signal.size();
-    signal.setSize(signalSize);
-    for(int i = 0; i < signalSize; i++){
-        signal[i] = this->signal[i];
-    }
+    signal.setSignal(this->signal);
 }
 
 void FileManager::saveSignalToFile(const Signal &signal, const std::string& fileName) {
     this->openFile(fileName, FileType::OUTPUT_FILE);
-    // Write each element of the array to the file
-    for (int i = 0; i < signal.getSize(); i++) {
-        this->outputSignalFile << signal[i] << " ";
+    for (auto& signalElement : signal.getSignal()) {
+        this->outputSignalFile << signalElement << " ";
     }
 }
 

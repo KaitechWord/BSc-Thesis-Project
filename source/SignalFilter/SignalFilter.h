@@ -9,5 +9,5 @@ class SignalFilter : public Filter<Signal>{
         void apply(Signal &signal) override;
     protected:
         int maskSize;
-        virtual void filter(const Signal& oldSignal, Signal& newPartOfSignal, int firstIndex, int lastIndex) = 0;
+        virtual void filter(const Signal& oldSignal, std::shared_ptr<Signal> newPartOfSignal, int firstIndex, int lastIndex) = 0;
 };
