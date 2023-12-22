@@ -24,8 +24,8 @@ void NaiveSignalFilter::filter(const Signal& oldSignal, std::shared_ptr<Signal> 
         if(rightMostIndexOfMask >= signalSize){
             rightMostIndexOfMask = signalSize - 1;
         }
-        //If index is outside of our window mask, we need to iterate through every number to find the MIN/MAX
-        if(indexOfTargetValue < leftMostIndexOfMask){
+        //If index is outside of our window mask or it is our first iteration, we need to iterate through every number to find the MIN/MAX
+        if(indexOfTargetValue < leftMostIndexOfMask || i == firstIndex){
             targetValue = this->startingValue;
             for(int j = leftMostIndexOfMask; j <= rightMostIndexOfMask; j++){
                 if(this->compare(oldSignal[j], targetValue)){
