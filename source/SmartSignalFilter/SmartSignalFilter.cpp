@@ -1,14 +1,15 @@
-#include "NaiveSignalFilter.h"
+#include "SmartSignalFilter.h"
 #include <iostream>
+#include <map>
 
-NaiveSignalFilter::NaiveSignalFilter(int threadNum, AlgorithmType algType, int maskSize)
+SmartSignalFilter::SmartSignalFilter(int threadNum, AlgorithmType algType, int maskSize)
     : SignalFilter(threadNum, algType, maskSize)
 {}
 
-void NaiveSignalFilter::apply(Signal& signal) {
+void SmartSignalFilter::apply(Signal& signal) {
     this->data = signal;
     int size = signal.getSignalSize();
-    int threadsNum = this->tp.getThreadsNum(); //dziwnie to sie zachowuje dla wiekszej liczby watkow
+    int threadsNum = this->tp.getThreadsNum();
     if (threadsNum > size) {
         std::cout << "The number of threads is bigger than the size of the signal. Setting number of threads to size.\n";
         threadsNum = size;
@@ -16,14 +17,31 @@ void NaiveSignalFilter::apply(Signal& signal) {
     int sizeOfOneThread = size / threadsNum;
     int remainder = size % threadsNum;
     std::vector<std::shared_ptr<Signal>> partsOfSignal;
-
     this->tp.start();
+    std::map<int, std::map<int, int>> prePostFixes;
+    std::mutex prePostFixesL;
+    std::shared_ptr<std::atomic<bool>>  isPreviousDoneWithEndPart = nullptr;
+    std::shared_ptr<std::atomic<bool>>  amIDoneWithEndPart = nullptr;
     for (int i = 0; i < threadsNum; i++) {
+        PartOfSignal partOfSignalType = PartOfSignal::MID;
         int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
         int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
         partsOfSignal.emplace_back(std::make_shared<Signal>());
         std::shared_ptr<Signal> partOfSignal = partsOfSignal.back();
-        this->tp.queueJob([this, partOfSignal, firstIndex, lastIndex]() { this->filter(partOfSignal, firstIndex, lastIndex); });
+        if(firstIndex == 0 && lastIndex == size){
+            partOfSignalType = PartOfSignal::WHOLE;
+        } else if (firstIndex == 0) {
+            partOfSignalType = PartOfSignal::START;
+            amIDoneWithEndPart = std::make_shared<std::atomic<bool>>();
+        } else if (lastIndex == size) {
+            partOfSignalType = PartOfSignal::END;
+            isPreviousDoneWithEndPart = amIDoneWithEndPart;
+            amIDoneWithEndPart = nullptr;
+        } else { //MID
+            isPreviousDoneWithEndPart = amIDoneWithEndPart;
+            amIDoneWithEndPart = std::make_shared<std::atomic<bool>>();
+        }
+        this->tp.queueJob([this, partOfSignal, firstIndex, lastIndex]() { this->filter(partOfSignal, firstIndex, lastIndex, isPreviousDoneWithEndPart, amIDoneWithEndPart); });
     }
     while (this->tp.busy()) {};
     this->tp.stop();
@@ -37,42 +55,28 @@ void NaiveSignalFilter::apply(Signal& signal) {
     }
 }
 
-void NaiveSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firstIndex, int lastIndex){
-    int signalSize = this->data.getSignalSize();
+// need to remember that the map is not thread safe, even though i assign values to different keys
+// sauce: https://stackoverflow.com/questions/62105665/c-multithreading-writing-to-different-keys-in-same-map-causing-problems
+void SmartSignalFilter::filter(const Signal& oldSignal, std::shared_ptr<Signal> newPartOfSignal, int firstIndex, int lastIndex, PartOfSignal partOfSignal, std::shared_ptr<std::atomic<bool>> isPreviousDoneWithEndPart, std::shared_ptr<std::atomic<bool>> amIDoneWithEndPart) {
+    int signalSize = oldSignal.getSignalSize();
     //By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
     int maskOneHalfLength = this->maskSize / 2;
     //Setting the initial value of index of MIN/MAX value that we are looking for to one behind the start of mask
     int indexOfTargetValue = firstIndex - maskOneHalfLength;
     //Starting value is set in base class in regards to algType
     int targetValue = this->startingValue;
-    for(int i = firstIndex; i <= lastIndex; i++){
+    for (int i = firstIndex; i <= lastIndex; i++) {
         int leftMostIndexOfMask = i - maskOneHalfLength;
         //Protects us against going out of bounds from left side
-        if(leftMostIndexOfMask < 0){
+        if (leftMostIndexOfMask < 0) {
             leftMostIndexOfMask = 0;
         }
         //Protects us against going out of bounds from right side
         int rightMostIndexOfMask = i + maskOneHalfLength;
-        if(rightMostIndexOfMask >= signalSize){
+        if (rightMostIndexOfMask >= signalSize) {
             rightMostIndexOfMask = signalSize - 1;
         }
-        //If index is outside of our window mask, we need to iterate through every number to find the MIN/MAX
-        if(indexOfTargetValue < leftMostIndexOfMask || i == firstIndex){
-            targetValue = this->startingValue;
-            for(int j = leftMostIndexOfMask; j <= rightMostIndexOfMask; j++){
-                if(this->compare(this->data[j], targetValue)){
-                    targetValue = this->data[j];
-                    indexOfTargetValue = j;
-                }
-            }
-            //If index is inside the mask, we need to check if the new value that entered the mask by moving it by one value
-            //is more suitable than already found MIN/MAX value
-        } else {
-            if(this->compare(this->data[rightMostIndexOfMask], targetValue)){
-                targetValue = this->data[rightMostIndexOfMask];
-                indexOfTargetValue = rightMostIndexOfMask;
-            }
-        }
+        
         newPartOfSignal->pushBack(targetValue);
     }
 }

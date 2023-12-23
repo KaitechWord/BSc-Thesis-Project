@@ -13,7 +13,7 @@ include(source/ThreadPool/CMakeLists.txt)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(Signal source/signals.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${signal_filter_src} ${naive_signal_filter_src})
+add_executable(Signal source/signals.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${signal_filter_src} ${naive_signal_filter_src} ${smart_signal_filter_src})
 #add_executable(Image source/signals.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${image_filter_src})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
