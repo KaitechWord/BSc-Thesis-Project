@@ -11,7 +11,7 @@ enum class FileType {
 class FileManager{
     public:
         void loadSignalFromFile(const std::string &fileName);
-        void saveSignalToFile(const Signal &signal, const std::string& fileName);
+        void saveSignalToFile(Signal &signal, const std::string& fileName);
         void getLoadedSignal(Signal &signal);
         ~FileManager();
     private:

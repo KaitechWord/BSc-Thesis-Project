@@ -9,7 +9,7 @@ class Signal{
         int operator[](int i) const;
         int& operator[](int i);
         int getSignalSize() const;
-        const std::vector<int> getSignal() const;
+        std::vector<int> getSignal();
         void setSignal(const std::vector<int> &signal);
         ~Signal();
     private:

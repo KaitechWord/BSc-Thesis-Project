@@ -37,9 +37,9 @@ void FileManager::getLoadedSignal(Signal &signal){
     signal.setSignal(this->signal);
 }
 
-void FileManager::saveSignalToFile(const Signal &signal, const std::string& fileName) {
+void FileManager::saveSignalToFile(Signal &signal, const std::string& fileName) {
     this->openFile(fileName, FileType::OUTPUT_FILE);
-    for (auto& signalElement : signal.getSignal()) {
+    for (const auto& signalElement : signal.getSignal()) {
         this->outputSignalFile << signalElement << " ";
     }
 }

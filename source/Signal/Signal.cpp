@@ -14,7 +14,7 @@ void Signal::setSignal(const std::vector<int>& signal) {
     this->data = signal;
 }
 
-const std::vector<int> Signal::getSignal() const{
+std::vector<int> Signal::getSignal(){
     return this->data;
 }
 

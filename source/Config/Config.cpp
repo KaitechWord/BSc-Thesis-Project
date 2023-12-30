@@ -1,18 +1,9 @@
 #include "Config.h"
 #include <iostream>
 #include <string>
-#include <windows.h>
-
-std::string getexepath()
-{
-    char result[MAX_PATH];
-    return std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
-}
-
 
 Config::Config(const std::string &filePath)
 {
-    std::cout << getexepath();
     boost::property_tree::read_json(filePath, pt);
 }
 

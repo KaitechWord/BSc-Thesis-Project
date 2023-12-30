@@ -1,4 +1,4 @@
 set(smart_signal_filter_src
-    source/NaiveSignalFilter/SmartSignalFilter.cpp
-    source/NaiveSignalFilter/SmartSignalFilter.h
+    source/SmartSignalFilter/SmartSignalFilter.cpp
+    source/SmartSignalFilter/SmartSignalFilter.h
 )
