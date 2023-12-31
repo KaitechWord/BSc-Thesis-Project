@@ -94,25 +94,27 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
                 }
             }
             newPartOfSignal->pushBack(targetValue);
-            std::cout << newPartOfSignal->getSignal().back() << std::endl;
+            std::cout << newPartOfSignal->getSignal().back() << " at index: " << i << std::endl;
         }
         bool wasPrefixMaskStoppedEarlier = false;
         bool wasPostfixMaskStoppedEarlier = false;
         int stoppedEarlierLastIndex = -1;
         //prefixes
-        //TODO: sprawdzic te przypadki kiedy sygnal nam sie konczy wczesniej niz te indeksy od masek
+        //TODO: w zasadzie to musze zamienic tylko nazwy prefix z postfix, ale idea jest okej
+        //it also tells us about the last index that was used inside the loop
         for (int startOfPrefixMask = 0; startOfPrefixMask < signalSize; startOfPrefixMask += maskSize + 1) {
             //case when the start of the prefix mask is the only left index 
             if (startOfPrefixMask == signalSize - 1) {
-                newPartOfSignal->pushBack(this->data[startOfPrefixMask]);
+                // we break coz startOfPrefixMask is the only index left (we calculate the next index, which does not exist at this point)
                 break;
             }
             int endOfPrefixMask = startOfPrefixMask + this->maskSize - 1;
             //case when the end of the prefix mask is bigger than size
             if (endOfPrefixMask >= signalSize) {
-                wasPrefixMaskStoppedEarlier = true;
-                stoppedEarlierLastIndex = startOfPrefixMask;
-                break;
+                //endOfPrefixMask = signalSize - 1;
+                // when the prefix(postfix in real) mask ends after the size of our signal,
+                // it would be the best to implement approach from naive solution, coz we cant even calc
+                // one mask at this point
             }
             this->prePostFixes[endOfPrefixMask][endOfPrefixMask] = this->data[endOfPrefixMask];
             int lastBeforeLastPrefixMaskIndex = startOfPrefixMask + this->maskSize - 2; //coz we check j + 1
@@ -131,15 +133,20 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
             //postfixes
             //TODO: sprawdzic te przypadki kiedy sygnal nam sie konczy wczesniej niz te indeksy od masek
             int startOfPostfixMask = startOfPrefixMask + maskSize;
-            if (startOfPostfixMask == signalSize - 1) {
-                newPartOfSignal->pushBack(this->data[startOfPostfixMask]);
-                break;
+            if (startOfPostfixMask >= signalSize) {
+                startOfPostfixMask = signalSize - 1;
+                // it means that we can only calc one index, which is the middle index of previous mask
+                // thus we need to handle the indexes after the middle index of previous mask,
+                // probably the naive approach would be the best once again
             }
             int endOfPostfixMask = startOfPrefixMask + maskSize * 2 - 1;
             if (endOfPostfixMask >= signalSize) {
-                wasPrefixMaskStoppedEarlier = true;
-                stoppedEarlierLastIndex = startOfPrefixMask;
-                break;
+                endOfPostfixMask = signalSize - 1;
+                // it means that we can calculate the indexes(by that i mean the middle indexes of masks) up to
+                // middle of prefix(postfix really) mask and up to some index which is defined by the last index of 
+                // endOfPostfixMask (not directly, it helps define it in some way)
+                // thus, the approach to calc the indexes after the middle one of prefix(postfix really) mask needs to be implemented
+                // it can be done in a way that we use smart approach as long as we can and then switch to naive
             }
             this->prePostFixes[startOfPostfixMask][startOfPostfixMask] = this->data[startOfPostfixMask];
             int nextAfterStartIndexOfPostfixMask = startOfPostfixMask + 1;
@@ -183,8 +190,9 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
                 else {
                     newPartOfSignal->pushBack(this->prePostFixes[leftMostIndexOfMask][rightMostIndexOfMask]);
                 }
-                std::cout << newPartOfSignal->getSignal().back() << std::endl;
+                std::cout << newPartOfSignal->getSignal().back() << " at index: " << j + maskOneHalfLength << std::endl;
             }
+            std::cout << "End of iteration" << std::endl;
         }
 
         // now we can proceed to deal with the mid part of a signal
