@@ -1,5 +1,5 @@
 {
-    "ThreadsNumber": 4,
+    "ThreadsNumber": 12,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
