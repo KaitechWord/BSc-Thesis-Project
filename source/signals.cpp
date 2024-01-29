@@ -9,6 +9,7 @@
 #include "./Signal/Signal.h"
 #include "./NaiveSignalFilter/NaiveSignalFilter.h"
 #include "./SmartSignalFilter/SmartSignalFilter.h"
+#include <opencv2/core.hpp>
 
 Config &config = Config::instance("../../../data/config.json");
 
@@ -28,7 +29,8 @@ int main(int argc, char *argv[]){
     fileManager.loadSignalFromFile(signalInfo.dataPath);
     Signal signal;
     fileManager.getLoadedSignal(signal);
-    SmartSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
+    //SmartSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
+    NaiveSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
     SSF.apply(signal);
     fileManager.saveSignalToFile(signal, "./yikes.txt");
     return 0;

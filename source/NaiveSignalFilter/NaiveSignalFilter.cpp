@@ -1,5 +1,6 @@
 #include "NaiveSignalFilter.h"
 #include <iostream>
+#include <chrono>
 
 NaiveSignalFilter::NaiveSignalFilter(int threadNum, AlgorithmType algType, int maskSize)
     : SignalFilter(threadNum, algType, maskSize)
@@ -8,7 +9,7 @@ NaiveSignalFilter::NaiveSignalFilter(int threadNum, AlgorithmType algType, int m
 void NaiveSignalFilter::apply(Signal& signal) {
     this->data = signal;
     int size = signal.getSignalSize();
-    int threadsNum = this->tp.getThreadsNum(); //dziwnie to sie zachowuje dla wiekszej liczby watkow
+    int threadsNum = 1;//this->tp.getThreadsNum(); //dziwnie to sie zachowuje dla wiekszej liczby watkow
     if (threadsNum > size) {
         std::cout << "The number of threads is bigger than the size of the signal. Setting number of threads to size.\n";
         threadsNum = size;
@@ -45,6 +46,7 @@ void NaiveSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
     int indexOfTargetValue = firstIndex - maskOneHalfLength;
     //Starting value is set in base class in regards to algType
     int targetValue = this->startingValue;
+    auto t1 = std::chrono::high_resolution_clock::now();
     for(int i = firstIndex; i <= lastIndex; i++){
         int leftMostIndexOfMask = i - maskOneHalfLength;
         //Protects us against going out of bounds from left side
@@ -75,4 +77,7 @@ void NaiveSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
         }
         newPartOfSignal->pushBack(targetValue);
     }
+    auto t2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> ms_double = t2 - t1;
+    std::cout << ms_double.count() << "ms\n";
 }

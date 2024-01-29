@@ -15,6 +15,6 @@ class SmartSignalFilter : public SignalFilter {
 		void apply(Signal& signal) override;
 	private:
 		void filter(std::shared_ptr<Signal> newPartOfSignal, int firstIndex, int lastIndex, PartOfSignal partOfSignalType);
-		std::map<int, std::map<int, int>> prePostFixes;
+		std::unordered_map<int, std::unordered_map<int, int>> prePostFixes;
 		std::mutex prePostFixesL;
 };
