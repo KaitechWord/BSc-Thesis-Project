@@ -55,6 +55,11 @@ void Config::verifyInfo(FilterInfo &filterInfo, std::string &variant, std::strin
         std::cout << "Mask (side) size less or equal to 0.\nMask (side) size set to 3.\n";
         filterInfo.maskSize = 3;
     }
+    if(filterInfo.maskSize % 2 == 0){
+        filterInfo.maskSize--;
+        std::cout << "Mask (side) size is even.\nMask (side) needs to be odd to work correctly (to establish centre pixel). Setting it to one lower: " << filterInfo.maskSize << "\n";
+
+    }
 }
 
 Config::~Config(){}

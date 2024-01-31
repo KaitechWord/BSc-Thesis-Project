@@ -96,7 +96,6 @@ void NaiveImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
                 for (int k = topMostIndexOfMask; k <= botMostIndexOfMask; k++) {
                     for (int l = leftMostIndexOfMask; l <= rightMostIndexOfMask; l++) {
                         if (this->compare(static_cast<int>(this->data.at<uchar>(k, l)), targetValue)) {
-                            uchar test = this->data.at<uchar>(k, l);
                             targetValue = static_cast<int>(this->data.at<uchar>(k, l));
                             rowOfTargetValue = k;
                             colOfTargetValue = l;
@@ -106,16 +105,6 @@ void NaiveImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
                 //If index is inside the mask, we need to check if the new value that entered the mask by moving it by one value
                 //is more suitable than already found MIN/MAX value
             } else {
-                /*for (int k = topMostIndexOfMask; k <= botMostIndexOfMask; k++) {
-                    for (int l = leftMostIndexOfMask; l <= rightMostIndexOfMask; l++) {
-                        if (this->compare(static_cast<int>(this->data.at<uchar>(k, l)), targetValue)) {
-                            uchar test = this->data.at<uchar>(k, l);
-                            targetValue = static_cast<int>(this->data.at<uchar>(k, l));
-                            rowOfTargetValue = k;
-                            colOfTargetValue = l;
-                        }
-                    }
-                }*/
                 //if row changed, we need to check every pixel that is not overlapping with previous mask to find the new minimum and we check if the row really changed
                 //or we are shortening the mask once again due to the bottom border
                 if (lastbotMostIndexOfMask < botMostIndexOfMask) {
@@ -139,9 +128,9 @@ void NaiveImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 
 
 
-                //if row didn't change, we know that col must have changed, but we need to check if there is really a new col or we are just shortening the mask
-                //due to the fact that right image border stops us and if current right most index is greater than the last one, we need to check the new column that entered the mask
-                if (lastRightMostIndexOfMask < rightMostIndexOfMask) {
+                ////if row didn't change, we know that col must have changed, but we need to check if there is really a new col or we are just shortening the mask
+                ////due to the fact that right image border stops us and if current right most index is greater than the last one, we need to check the new column that entered the mask
+               if (lastRightMostIndexOfMask < rightMostIndexOfMask) {
                     for (int k = topMostIndexOfMask; k <= botMostIndexOfMask; k++) {
                         if (this->compare(static_cast<int>(this->data.at<uchar>(k, rightMostIndexOfMask)), targetValue)) {
                             targetValue = static_cast<int>(this->data.at<uchar>(k, rightMostIndexOfMask));
