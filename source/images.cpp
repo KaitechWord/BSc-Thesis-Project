@@ -20,8 +20,21 @@ int main(int argc, char* argv[]) {
     cv::Mat image;
     fileManager.getLoadedImage(image);
     cv::Mat ogImage = image;
+    cv::Mat dst = ogImage;
     NaiveImageFilter NIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
     NIF.apply(image);
     fileManager.saveImageToFile(image, "./imageResult.png");
+
+    // TESTING - MIN VARIANT
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(imageInfo.maskSize, imageInfo.maskSize));
+    cv::erode(ogImage, ogImage, kernel);
+    cv::bitwise_xor(ogImage, image, dst);
+    if (cv::countNonZero(dst) > 0) {
+        std::cout << "not same";
+    }
+    else {
+        std::cout << "same";
+    }
+    // ~TESTING
     return 0;
 }
