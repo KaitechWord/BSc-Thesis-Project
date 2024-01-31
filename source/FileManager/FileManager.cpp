@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iostream>
 
-void FileManager::openFile(const std::string &fileName, FileType fileType){
+void FileManager::openFile(const std::string &fileName, FileType fileType) {
     if(fileType == FileType::INPUT_FILE){
         inputSignalFile.open(fileName, std::ifstream::in);
     } else{
@@ -21,7 +21,7 @@ void FileManager::openFile(const std::string &fileName, FileType fileType){
     } 
 }
 
-void FileManager::loadSignalFromFile(const std::string &fileName){
+void FileManager::loadSignalFromFile(const std::string &fileName) {
     this->openFile(fileName, FileType::INPUT_FILE);
     std::string line;
     while(std::getline(this->inputSignalFile, line)){
@@ -33,8 +33,21 @@ void FileManager::loadSignalFromFile(const std::string &fileName){
     }
 }
 
-void FileManager::getLoadedSignal(Signal &signal){
+void FileManager::loadImageFromFile(const std::string& fileName) {
+    this->image = cv::imread(fileName);
+    cv::Mat grayscaleImage;
+    if (this->image.empty()) {
+        throw std::exception("Wrong file path");
+    }
+    cv::cvtColor(this->image, this->image, cv::COLOR_BGR2GRAY);
+}
+
+void FileManager::getLoadedSignal(Signal &signal) {
     signal.setSignal(this->signal);
+}
+
+void FileManager::getLoadedImage(cv::Mat& image) {
+    image = this->image;
 }
 
 void FileManager::saveSignalToFile(Signal &signal, const std::string& fileName) {
@@ -42,6 +55,10 @@ void FileManager::saveSignalToFile(Signal &signal, const std::string& fileName) 
     for (const auto& signalElement : signal.getSignal()) {
         this->outputSignalFile << signalElement << " ";
     }
+}
+
+void FileManager::saveImageToFile(cv::Mat& image, const std::string& fileName) {
+    cv::imwrite(fileName, image);
 }
 
 FileManager::~FileManager(){

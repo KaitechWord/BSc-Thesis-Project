@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Signal source/signals.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${signal_filter_src} ${naive_signal_filter_src} ${smart_signal_filter_src})
-add_executable(Image source/signals.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${image_filter_src} ${naive_image_filter_src})
+add_executable(Image source/images.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${image_filter_src} ${naive_image_filter_src})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_link_libraries(Signal LINK_PUBLIC ${Boost_LIBRARIES})

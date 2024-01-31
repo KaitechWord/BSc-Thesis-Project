@@ -1,5 +1,6 @@
 #include "Filter.h"
 #include "../Signal/Signal.h"
+#include <opencv2/core.hpp>
 
 template<typename T>
 Filter<T>::Filter(int threadNum, AlgorithmType algType)
@@ -18,3 +19,4 @@ Filter<T>::Filter(int threadNum, AlgorithmType algType)
 }
 
 template class Filter<Signal>;
+template class Filter<cv::Mat>;

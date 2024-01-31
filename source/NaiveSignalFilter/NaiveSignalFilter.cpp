@@ -9,7 +9,7 @@ NaiveSignalFilter::NaiveSignalFilter(int threadNum, AlgorithmType algType, int m
 void NaiveSignalFilter::apply(Signal& signal) {
     this->data = signal;
     int size = signal.getSignalSize();
-    int threadsNum = 1;//this->tp.getThreadsNum(); //dziwnie to sie zachowuje dla wiekszej liczby watkow
+    int threadsNum = 1;//this->tp.getThreadsNum();
     if (threadsNum > size) {
         std::cout << "The number of threads is bigger than the size of the signal. Setting number of threads to size.\n";
         threadsNum = size;

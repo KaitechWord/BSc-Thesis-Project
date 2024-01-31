@@ -58,8 +58,6 @@ void SmartSignalFilter::apply(Signal& signal) {
     }
 }
 
-// need to remember that the map is not thread safe, even though i assign values to different keys
-// sauce: https://stackoverflow.com/questions/62105665/c-multithreading-writing-to-different-keys-in-same-map-causing-problems
 void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firstIndex, int lastIndex, PartOfSignal partOfSignalType) {
     int signalSize = this->data.getSignalSize();
     //By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2

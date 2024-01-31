@@ -17,7 +17,6 @@ void Config::getInfo(FilterInfo &filterInfo, InfoToRead type){
     filterInfo.threadsNum = this->pt.get<int>("ThreadsNumber");
     switch (type){
         case InfoToRead::SIGNAL:
-            //these need to be double checked
             variant = this->pt.get<std::string>("SignalFilter.Variant");
             approach = this->pt.get<std::string>("SignalFilter.Approach");
             filterInfo.dataPath = this->pt.get<std::string>("SignalFilter.DataPath");
@@ -27,7 +26,7 @@ void Config::getInfo(FilterInfo &filterInfo, InfoToRead type){
             variant = this->pt.get<std::string>("ImageFilter.Variant");
             approach = this->pt.get<std::string>("ImageFilter.Approach");
             filterInfo.dataPath = this->pt.get<std::string>("ImageFilter.DataPath");
-            filterInfo.maskSize = this->pt.get<int>("SignalFilter.MaskSideSize");
+            filterInfo.maskSize = this->pt.get<int>("ImageFilter.MaskSideSize");
             break;
     }
     this->verifyInfo(filterInfo, variant, approach);
