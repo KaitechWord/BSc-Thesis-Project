@@ -19,13 +19,13 @@ void Config::getInfo(FilterInfo &filterInfo, InfoToRead type){
         case InfoToRead::SIGNAL:
             variant = this->pt.get<std::string>("SignalFilter.Variant");
             approach = this->pt.get<std::string>("SignalFilter.Approach");
-            filterInfo.dataPath = this->pt.get<std::string>("SignalFilter.DataPath");
+            filterInfo.dataPath = std::string(ROOT_DIR) + this->pt.get<std::string>("SignalFilter.DataPath");
             filterInfo.maskSize = this->pt.get<int>("SignalFilter.MaskSize");
             break;
         case InfoToRead::IMAGE:
             variant = this->pt.get<std::string>("ImageFilter.Variant");
             approach = this->pt.get<std::string>("ImageFilter.Approach");
-            filterInfo.dataPath = this->pt.get<std::string>("ImageFilter.DataPath");
+            filterInfo.dataPath = std::string(ROOT_DIR) + this->pt.get<std::string>("ImageFilter.DataPath");
             filterInfo.maskSize = this->pt.get<int>("ImageFilter.MaskSideSize");
             break;
     }

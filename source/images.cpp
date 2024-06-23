@@ -7,10 +7,11 @@
 #include "Config/Config.h"
 #include "Config/FilterInfo.h"
 #include "NaiveImageFilter/NaiveImageFilter.h"
+#include "SmartImageFilter/SmartImageFilter.h"
 #include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
 
-Config& config = Config::instance("./data/config.json");
+Config& config = Config::instance(std::string(ROOT_DIR) + "/data/config.json");
 
 int main(int argc, char* argv[]) {
     FilterInfo imageInfo;
@@ -26,9 +27,9 @@ int main(int argc, char* argv[]) {
     fileManager.getLoadedImage(testImage);
     // ~TESTING PURPOSES
 
-    NaiveImageFilter NIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
-    NIF.apply(image);
-    fileManager.saveImageToFile(image, "./imageResult.png");
+    SmartImageFilter SIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
+    SIF.apply(image);
+    fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/imageResult.png");
 
     // TESTING - MIN VARIANT ONLY
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(imageInfo.maskSize, imageInfo.maskSize));

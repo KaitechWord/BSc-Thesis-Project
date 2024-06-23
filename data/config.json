@@ -3,13 +3,13 @@
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
-                        "DataPath": "./data/signal.txt",
+                        "DataPath": "/data/signal.txt",
                         "MaskSize": 5
                     },
     "ImageFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
-                        "DataPath": "./data/Lenna_(test_image).png",
+                        "DataPath": "/data/Lenna_(test_image).png",
                         "MaskSideSize": 10
                     }
 }
