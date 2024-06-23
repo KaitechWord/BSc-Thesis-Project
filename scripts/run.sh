@@ -1,2 +1,2 @@
 #!/bin/sh
-./build/Signal
+./build/Image

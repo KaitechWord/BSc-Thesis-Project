@@ -1,0 +1,2221 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/3.22.1/CMakeSystem.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/conan_toolchain.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/3.22.1/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Platform/Linux.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Platform/Linux-GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"path" : "source/CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BoostConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BoostConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BoostTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Boost-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Boost-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Boost-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Boost-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktrace-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktrace-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktraceTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktrace-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktrace-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktrace-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libbacktrace-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2ConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2Config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/BZip2-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/bzip2ea144566b91c2/p/lib/cmake/conan-official-bzip2-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIBConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIBConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIBTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIB-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIB-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIB-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ZLIB-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCVConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCVConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCVTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCV-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCV-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCV-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenCV-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobuf-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobuf-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobufTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobuf-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobuf-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobuf-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/protobuf-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/proto6fafaadab0438/p/lib/cmake/protobuf/protobuf-generate.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/proto6fafaadab0438/p/lib/cmake/protobuf/protobuf-options.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/proto6fafaadab0438/p/lib/cmake/protobuf/protobuf-module.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/proto6fafaadab0438/p/lib/cmake/protobuf/protobuf-options.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/proto6fafaadab0438/p/lib/cmake/protobuf/protobuf-conan-protoc-target.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ade-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ade-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/adeTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ade-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ade-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ade-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ade-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommon-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommon-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommonTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommon-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommon-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommon-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkbcommon-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-config-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-config-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-configTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-config-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-config-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-config-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xkeyboard-config-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/wayland-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/wayland-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/waylandTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/wayland-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/wayland-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/wayland-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/wayland-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffi-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffi-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffiTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffi-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffi-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffi-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libffi-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libxml2-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/IconvConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/IconvConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/IconvTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Iconv-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Iconv-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Iconv-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Iconv-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/libxm8c0cee7ae2820/p/lib/cmake/conan-official-libxml2-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expat-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expat-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expatTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expat-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expat-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expat-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/expat-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorg-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorg-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorgTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorg-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorg-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorg-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/xorg-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JasperConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JasperConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JasperTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Jasper-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Jasper-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Jasper-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Jasper-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEGConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEGConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEGTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEG-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEG-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEG-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/JPEG-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/jaspea8ba52672b1d1/p/lib/cmake/conan-official-jasper-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXRConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXRConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXRTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXR-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXR-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXR-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenEXR-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ImathConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ImathConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ImathTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Imath-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Imath-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Imath-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Imath-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflate-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflate-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflateTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflate-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflate-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflate-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libdeflate-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFFConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFFConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFFTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFF-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFF-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFF-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/TIFF-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbig-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbig-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbigTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbig-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbig-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbig-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/jbig-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstd-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstd-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstdTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstd-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstd-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstd-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/zstd-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMAConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMAConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMATargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMA-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMA-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMA-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/LibLZMA-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/xz_utce29ac95b72a9/p/lib/cmake/conan-official-xz_utils-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebPConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebPConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebPTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebP-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebP-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebP-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/WebP-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quirc-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quirc-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quircTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quirc-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quirc-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quirc-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/quirc-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpeg-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpeg-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpegTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpeg-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpeg-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpeg-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ffmpeg-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetype-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetype-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetypeTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetype-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetype-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetype-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/freetype-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNGConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNGConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNGTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNG-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNG-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNG-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/PNG-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotli-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotli-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotliTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotli-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotli-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotli-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/brotli-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/freet3b2872fc75356/p/lib/cmake/conan-official-freetype-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEGConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEGConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEGTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEG-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEG-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEG-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenJPEG-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/openj2ca8b1aafa170/p/lib/cmake/conan-official-openjpeg-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/openh264-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx264-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libx265-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpx-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpx-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpxTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpx-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpx-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpx-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libvpx-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aac-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aac-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aacTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aac-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aac-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aac-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/fdk-aac-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudio-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudio-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudioTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudio-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudio-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudio-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/pulseaudio-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFileConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFileConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFileTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFile-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFile-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFile-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/SndFile-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/VorbisConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/VorbisConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/VorbisTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Vorbis-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Vorbis-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Vorbis-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Vorbis-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OggConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OggConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OggTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Ogg-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Ogg-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Ogg-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Ogg-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flac-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flac-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flacTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flac-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flac-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flac-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/flac-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpusConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpusConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpusTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Opus-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Opus-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Opus-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/Opus-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/mpg123-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lame-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lame-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lameTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lame-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lame-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lame-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libmp3lame-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcap-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcap-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcapTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcap-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcap-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcap-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libcap-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtool-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtool-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtoolTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtool-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtool-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtool-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libtool-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automake-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automake-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automakeTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automake-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automake-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automake-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/automake-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconf-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconf-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconfTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconf-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconf-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconf-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/autoconf-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/m4-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSAConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSAConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSATargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSA-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSA-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSA-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/ALSA-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSLConfigVersion.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSLConfig.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSLTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSL-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSL-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSL-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/OpenSSL-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/opens24dcde72b5eee/p/lib/cmake/conan-official-openssl-variables.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapi-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapi-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapiTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapi-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapi-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapi-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vaapi-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpau-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpau-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpauTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpau-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpau-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpau-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/vdpau-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1Targets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/libaom-av1-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1d-config-version.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1d-config.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/cmakedeps_macros.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1dTargets.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1d-debug-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1d-release-x86_64-data.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1d-Target-debug.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/dependencies/dav1d-Target-release.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/share/cmake-3.22/Modules/CMakeFindDependencyMacro.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/home/kajtekk/.conan2/p/b/opencf42a2daa4d43e/p/lib/cmake/conan-official-opencv-variables.cmake"
+		},
+		{
+			"path" : "source/Config/CMakeLists.txt"
+		},
+		{
+			"path" : "source/FileManager/CMakeLists.txt"
+		},
+		{
+			"path" : "source/Filter/CMakeLists.txt"
+		},
+		{
+			"path" : "source/ImageFilter/CMakeLists.txt"
+		},
+		{
+			"path" : "source/NaiveImageFilter/CMakeLists.txt"
+		},
+		{
+			"path" : "source/NaiveSignalFilter/CMakeLists.txt"
+		},
+		{
+			"path" : "source/SmartSignalFilter/CMakeLists.txt"
+		},
+		{
+			"path" : "source/Signal/CMakeLists.txt"
+		},
+		{
+			"path" : "source/SignalFilter/CMakeLists.txt"
+		},
+		{
+			"path" : "source/ThreadPool/CMakeLists.txt"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "/home/kajtekk/Documents/code/BSc-Thesis-Project/build",
+		"source" : "/home/kajtekk/Documents/code/BSc-Thesis-Project"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

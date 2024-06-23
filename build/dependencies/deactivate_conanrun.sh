@@ -1,0 +1,1 @@
+. "/home/kajtekk/Documents/code/BSc-Thesis-Project/build/dependencies/deactivate_conanrunenv-debug-x86_64.sh"

@@ -1,0 +1,55 @@
+{
+    "version": 3,
+    "vendor": {
+        "conan": {}
+    },
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 15,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "conan-debug",
+            "displayName": "'conan-debug' config",
+            "description": "'conan-debug' configure using 'Unix Makefiles' generator",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "environment": {
+                "ACLOCAL_PATH": "$penv{ACLOCAL_PATH}:/home/kajtekk/.conan2/p/b/libto7c8b19ede4173/p/res/aclocal",
+                "AUTOMAKE_CONAN_INCLUDES": "$penv{AUTOMAKE_CONAN_INCLUDES}:/home/kajtekk/.conan2/p/b/libto7c8b19ede4173/p/res/aclocal",
+                "AUTOCONF": "/home/kajtekk/.conan2/p/autocf2af015330354/p/bin/autoconf",
+                "AUTORECONF": "/home/kajtekk/.conan2/p/autocf2af015330354/p/bin/autoreconf",
+                "AUTOHEADER": "/home/kajtekk/.conan2/p/autocf2af015330354/p/bin/autoheader",
+                "AUTOM4TE": "/home/kajtekk/.conan2/p/autocf2af015330354/p/bin/autom4te",
+                "M4": "/home/kajtekk/.conan2/p/b/m4ae55c539fc216/p/bin/m4"
+            },
+            "toolchainFile": "conan_toolchain.cmake",
+            "binaryDir": "/home/kajtekk/Documents/code/BSc-Thesis-Project/build/dependencies"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "conan-debug",
+            "configurePreset": "conan-debug",
+            "jobs": 16
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "conan-debug",
+            "configurePreset": "conan-debug",
+            "environment": {
+                "ACLOCAL_PATH": "$penv{ACLOCAL_PATH}:/home/kajtekk/.conan2/p/b/libto7c8b19ede4173/p/res/aclocal",
+                "AUTOMAKE_CONAN_INCLUDES": "$penv{AUTOMAKE_CONAN_INCLUDES}:/home/kajtekk/.conan2/p/b/libto7c8b19ede4173/p/res/aclocal",
+                "PATH": "/home/kajtekk/.conan2/p/autom480a421c82a75/p/bin:/home/kajtekk/.conan2/p/autocf2af015330354/p/bin:/home/kajtekk/.conan2/p/b/m4ae55c539fc216/p/bin:$penv{PATH}",
+                "M4": "/home/kajtekk/.conan2/p/b/m4ae55c539fc216/p/bin/m4",
+                "ALSA_CONFIG_DIR": "/home/kajtekk/.conan2/p/b/libalf1fc6e1c6bca4/p/res/alsa",
+                "OPENSSL_MODULES": "/home/kajtekk/.conan2/p/b/opens24dcde72b5eee/p/lib/ossl-modules"
+            }
+        }
+    ]
+}

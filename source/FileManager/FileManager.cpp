@@ -37,7 +37,7 @@ void FileManager::loadImageFromFile(const std::string& fileName) {
     this->image = cv::imread(fileName);
     cv::Mat grayscaleImage;
     if (this->image.empty()) {
-        throw std::exception("Wrong file path");
+        throw std::runtime_error("Wrong file path");
     }
     cv::cvtColor(this->image, this->image, cv::COLOR_BGR2GRAY);
 }
