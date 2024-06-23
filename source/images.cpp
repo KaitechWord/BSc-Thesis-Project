@@ -4,13 +4,13 @@
 #include <cctype>
 #include <filesystem>
 #include "FileManager/FileManager.h"
-#include "Config/Config.h"
-#include "Config/FilterInfo.h"
-#include "NaiveImageFilter/NaiveImageFilter.h"
+#include "./Config/Config.h"
+#include "./Config/FilterInfo.h"
+#include "./NaiveImageFilter/NaiveImageFilter.h"
 #include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
 
-Config& config = Config::instance("./data/config.json");
+Config& config = Config::instance("../../../data/config.json");
 
 int main(int argc, char* argv[]) {
     FilterInfo imageInfo;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     cv::erode(testImage, testImage, kernel);
     cv::imshow("changed", image);
     cv::imshow("test", testImage);
-    cv::waitKey(10000);
+    cv::waitKey(0);
 
     //Uncomment one line below to fail the test for sure
     //testImage.at<uchar>(0, 0) = '1';

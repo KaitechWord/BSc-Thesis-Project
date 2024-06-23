@@ -10,7 +10,7 @@
 #include "./NaiveSignalFilter/NaiveSignalFilter.h"
 #include "./SmartSignalFilter/SmartSignalFilter.h"
 
-Config &config = Config::instance("../data/config.json");
+Config &config = Config::instance("../../../data/config.json");
 
 int main(int argc, char *argv[]){
     FilterInfo signalInfo, imageInfo;

@@ -1,4 +1,0 @@
-/home/kajtekk/Documents/code/BSc-Thesis-Project/build/CMakeFiles/Signal.dir
-/home/kajtekk/Documents/code/BSc-Thesis-Project/build/CMakeFiles/Image.dir
-/home/kajtekk/Documents/code/BSc-Thesis-Project/build/CMakeFiles/edit_cache.dir
-/home/kajtekk/Documents/code/BSc-Thesis-Project/build/CMakeFiles/rebuild_cache.dir
