@@ -20,7 +20,7 @@ set(ROOT_DIR ${CMAKE_SOURCE_DIR})
 add_definitions(-DROOT_DIR="${ROOT_DIR}")
 
 add_executable(Signal source/signals.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${signal_filter_src} ${naive_signal_filter_src} ${smart_signal_filter_src})
-add_executable(Image source/images.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${image_filter_src} ${naive_image_filter_src})
+add_executable(Image source/images.cpp ${file_manager_src} ${config_src} ${filter_src} ${thread_pool_src} ${signal_src} ${image_filter_src} ${naive_image_filter_src} ${smart_image_filter_src})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 target_link_libraries(Signal ${Boost_LIBRARIES} ${OpenCV_LIBS})
