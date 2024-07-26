@@ -93,24 +93,85 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 
 		for (auto j = topMost; j <= botMost; ++j) {
 			for (auto k = firstMaskRightMost; k >= firstMaskLeftMost; --k)
-				if (!getDesiredValue(desiredValues, firstMaskRightMost, k, j))
+				if (!getDesiredValue(desiredValues, k, firstMaskRightMost, j)) {
 					if (k == firstMaskRightMost)
-						desiredValues[firstMaskRightMost][k][j] = static_cast<int>(this->data.at<uchar>(j, k));
-					else
-						desiredValues[firstMaskRightMost][k][j] = this->compare(static_cast<int>(this->data.at<uchar>(j, k)), desiredValues[firstMaskRightMost][k + 1][j]);
+						desiredValues[k][firstMaskRightMost][j] = static_cast<int>(this->data.at<uchar>(j, k));
+					else {
+						auto currentValue = static_cast<int>(this->data.at<uchar>(j, k));
+						auto oldValue = desiredValues[k + 1][firstMaskRightMost][j];
+						if (this->compare(currentValue, oldValue)) {
+							desiredValues[k][firstMaskRightMost][j] = currentValue;
+						}
+						else {
+							desiredValues[k][firstMaskRightMost][j] = oldValue;
+						}
+					}
+				}
+
 
 			for (auto k = secondMaskLeftMost; k <= secondMaskRightMost; ++k)
-				if (!getDesiredValue(desiredValues, k, secondMaskRightMost, j))
+				if (!getDesiredValue(desiredValues, secondMaskLeftMost, k, j)) {
 					if (k == secondMaskLeftMost)
-						desiredValues[k][secondMaskRightMost][j] = static_cast<int>(this->data.at<uchar>(j, k));
-					else
-						desiredValues[k][secondMaskRightMost][j] = this->compare(static_cast<int>(this->data.at<uchar>(j, k)), desiredValues[k - 1][secondMaskRightMost][j]);
+						desiredValues[secondMaskLeftMost][k][j] = static_cast<int>(this->data.at<uchar>(j, k));
+					else {
+						auto currentValue = static_cast<int>(this->data.at<uchar>(j, k));
+						auto oldValue = desiredValues[secondMaskLeftMost][k - 1][j];
+						if (this->compare(currentValue, oldValue)) {
+							desiredValues[secondMaskLeftMost][k][j] = currentValue;
+						}
+						else {
+							desiredValues[secondMaskLeftMost][k][j] = oldValue;
+						}
+					}
+				}
 		}
 
 		//add calculating the processed pixels from firstMaskCenter(i) to sceondMaskCentre
-		auto secondMaskCentre = std::clamp(secondMaskLeftMost + maskOneHalfLength, firstMaskLeftMost, secondMaskRightMost);
-		for (auto j = i; j <= secondMaskCentre; ++j) {
-			newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(desiredValues[j][firstMaskRightMost + j][rowIndex]);
+		//tutaj jest zle, bo krancowe wartosci sie wywracaja, nie sprawdzamy ich
+		//tez jest problem bo w ciekawy sposob zapisuje do desiredValues (dla pierwszej maski od konca tej maski, a dla drugiej od jej poczatku)
+		//ponizszego for loopa tez moznaby zapisac z rozroznieniem dla pierwszej i drugiej maski z tego powodu? albo w normalny sposob zapisywac jest do desiredValues
+
+		//tu cos sie jebie
+		auto firstMaskCentre = std::clamp(i, firstMaskLeftMost, firstMaskRightMost);
+		auto secondMaskCentre = std::clamp(i + 2 * maskOneHalfLength + 1, secondMaskLeftMost, secondMaskRightMost);
+		for (auto j = firstMaskCentre; j <= secondMaskCentre; ++j) {
+			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskLeftMost, secondMaskRightMost);
+			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskLeftMost, secondMaskRightMost);
+			if (auto diff = currentMaskRightMost - firstMaskRightMost; diff > 0) {
+				auto firstPartOfMaskValue = desiredValues[currentMaskLeftMost][firstMaskRightMost][topMost];
+				auto secondPartOfMaskValue = desiredValues[firstMaskRightMost + diff][currentMaskRightMost][topMost];
+				int bestValue;
+				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+					bestValue = firstPartOfMaskValue;
+				}
+				else {
+					bestValue = secondPartOfMaskValue;
+				}
+				for (auto k = topMost + 1; k <= botMost; ++k) {
+					firstPartOfMaskValue = desiredValues[currentMaskLeftMost][firstMaskRightMost][k];
+					secondPartOfMaskValue = desiredValues[firstMaskRightMost + diff][currentMaskRightMost][k];
+					if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+						if (this->compare(firstPartOfMaskValue, bestValue)) {
+							bestValue = firstPartOfMaskValue;
+						}
+					}
+					else {
+						if (this->compare(secondPartOfMaskValue, bestValue)) {
+							bestValue = secondPartOfMaskValue;
+						}
+					}
+				}
+				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
+				continue;
+			}
+			auto bestValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(topMost);
+			for (auto k = topMost + 1; k <= botMost; ++k) {
+				auto currentValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(k);
+				if (this->compare(currentValue, bestValue)) {
+					bestValue = currentValue;
+				}
+			}
+			newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
 		}
 
 		if (i == lastIndex)
