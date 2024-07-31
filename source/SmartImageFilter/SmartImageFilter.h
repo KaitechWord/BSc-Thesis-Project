@@ -8,3 +8,4 @@ public:
 private:
     void filter(std::shared_ptr<cv::Mat> newPartOfSignal, int firstIndex, int lastIndex);
 };
+ 

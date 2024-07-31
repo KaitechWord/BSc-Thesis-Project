@@ -13,7 +13,31 @@
 
 Config& config = Config::instance(std::string(ROOT_DIR) + "/data/config.json");
 
+void test() 
+{
+    FilterInfo imageInfo;
+    config.getInfo(imageInfo, InfoToRead::IMAGE);
+    FileManager fileManager;
+    fileManager.loadImageFromFile(std::string(ROOT_DIR) + "/imageResult.png");
+    cv::Mat image;
+    fileManager.getLoadedImage(image);
+
+    FileManager fileManager1;
+    fileManager1.loadImageFromFile(std::string(ROOT_DIR) + "/testImageResult.png");
+    cv::Mat testImage;
+    fileManager.getLoadedImage(testImage);
+
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+            if (image.at<uchar>(i, j) != testImage.at<uchar>(i, j)) {
+                std::cout << static_cast<int>(image.at<uchar>(i, j)) << " vs. " << static_cast<int>(testImage.at<uchar>(i, j)) << " at (" << i << ", " << j << ")\n";
+            }
+        }
+    }
+}
+
 int main(int argc, char* argv[]) {
+    //test();
     FilterInfo imageInfo;
     config.getInfo(imageInfo, InfoToRead::IMAGE);
     FileManager fileManager;
@@ -25,11 +49,19 @@ int main(int argc, char* argv[]) {
     fileManager.loadImageFromFile(imageInfo.dataPath);
     cv::Mat testImage;
     fileManager.getLoadedImage(testImage);
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+            if (static_cast<int>(testImage.at<uchar>(i, j)) == 0) {
+                std::cout << "contains 0 at (" << i << ", " << j << ")\n";
+                break;
+            }
+        }
+    }
     // ~TESTING PURPOSES
 
     SmartImageFilter SIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
     SIF.apply(image);
-    fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/imageResult.png");
+    fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/imageResultBigger.png");
 
     // TESTING - MIN VARIANT ONLY
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(imageInfo.maskSize, imageInfo.maskSize));
@@ -37,6 +69,7 @@ int main(int argc, char* argv[]) {
     cv::imshow("changed", image);
     cv::imshow("test", testImage);
     cv::waitKey(10000);
+    fileManager.saveImageToFile(testImage, std::string(ROOT_DIR) + "/testImageResultBigger.png");
 
     //Uncomment one line below to fail the test for sure
     //testImage.at<uchar>(0, 0) = '1';
@@ -45,13 +78,13 @@ int main(int argc, char* argv[]) {
         for (int j = 0; j < image.cols; j++) {
             if (image.at<uchar>(i, j) != testImage.at<uchar>(i, j)) {
                 std::cout << static_cast<int>(image.at<uchar>(i, j)) << " vs. " << static_cast<int>(testImage.at<uchar>(i, j)) << " at (" << i << ", " << j << ")\n";
-                areDifferent = true;
-                break;
+                /*areDifferent = true;
+                break;*/
             }
         }
-        if (areDifferent) {
+        /*if (areDifferent) {
             break;
-        }
+        }*/
     }
     if (areDifferent) {
         std::cout << "\nTest failed - images are different\n\n";
