@@ -9,7 +9,7 @@
     "ImageFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
-                        "DataPath": "/data/Lenna_(test_image).png",
+                        "DataPath": "/data/diffSize.jpg",
                         "MaskSideSize": 5
                     }
 }

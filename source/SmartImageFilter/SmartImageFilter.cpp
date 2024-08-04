@@ -13,7 +13,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	int rows = image.rows;
 	int cols = image.cols;
 	int pixelsNum = rows * cols;
-	int threadsNum = 100;//this->tp.getThreadsNum();
+	int threadsNum = 1;//this->tp.getThreadsNum();
 	if (threadsNum > pixelsNum) {
 		std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
 		threadsNum = pixelsNum;
@@ -37,24 +37,22 @@ void SmartImageFilter::apply(cv::Mat& image) {
 		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
 		int partOfimageIndex = 0;
 		int rowSize = this->data.rows;
+		int colSize = this->data.cols;
 		for (int j = firstIndex; j <= lastIndex; j++) {
-			image.at<uchar>(j / rowSize, j % rowSize) = partsOfImage[i]->at<uchar>(j / rowSize, j % rowSize);
+			image.at<uchar>(j / colSize, j % colSize) = partsOfImage[i]->at<uchar>(j / colSize, j % colSize);
 		}
 	}
 }
 
-std::optional<int> getDesiredValue(std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, int>>>& desiredValues, int x, int y, int z) {
-	auto itX = desiredValues.find(x);
-	if (itX != desiredValues.end()) {
-		auto itY = itX->second.find(y);
-		if (itY != itX->second.end()) {
-			auto itZ = itY->second.find(z);
-			if (itZ != itY->second.end()) {
-				return itZ->second;  // Found the value
-			}
-		}
-	}
-	return std::nullopt;  // Value not found
+int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSize)
+{
+	return startColIndex * colsSize * colsSize + endColIndex * colsSize + rowIndex;
+	//return startColIndex + endColIndex * colsSize + rowIndex * colsSize * colsSize;
+}
+
+std::optional<int> getDesiredValue(const std::vector<int>& prefixesPostfixes, int x, int y, int z, int colsSize) {
+	auto value = prefixesPostfixes.at(getIndex(x, y, z, colsSize));
+	return value == -1 ? std::nullopt : std::optional(value);
 }
 
 void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int firstIndex, int lastIndex) {
@@ -78,7 +76,12 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 	//  z <- row index
 
 	// "i" is always the centre of first mask
-	std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, int>>> desiredValues;
+	//std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, int>>> prefixesPostfixes;
+	//maskSize is also the height of mask
+	//std::vector<int> prefixesPostfixes(cols * (1 + cols * (1 + rows)), -1);
+	//std::vector<int> prefixesPostfixes(cols * cols * cols + cols * cols + rows, -1);
+	//nie musze przetrzymywac wszystkich wartosci, jedynie dla aktualnej maski 
+	std::vector<int> prefixesPostfixes(cols * cols * cols + cols * cols + rows, -1);
 	auto lastRowIndex = 0;
 	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + maskSize + 1, lastIndex)) {
 		auto rowIndex = i / cols;
@@ -102,38 +105,38 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 
 		for (auto j = topMost; j <= botMost; ++j) {
 			for (auto k = firstMaskRightMost; k >= firstMaskLeftMost; --k)
-				if (!getDesiredValue(desiredValues, k, firstMaskRightMost, j)) {
+				if (!getDesiredValue(prefixesPostfixes, k, firstMaskRightMost, j, cols)) {
 					if (k == firstMaskRightMost) {
 						int testValue = static_cast<int>(this->data.at<uchar>(j, k));
-						desiredValues[k][firstMaskRightMost][j] = testValue;
+						prefixesPostfixes.at(getIndex(k, firstMaskRightMost, j, cols)) = testValue;
 					}
 					else {
 						int currentValue = static_cast<int>(this->data.at<uchar>(j, k));
-						int oldValue = desiredValues.at(k + 1).at(firstMaskRightMost).at(j);
+						int oldValue = prefixesPostfixes.at(getIndex(k + 1, firstMaskRightMost, j, cols));
 						if (this->compare(currentValue, oldValue)) {
-							desiredValues[k][firstMaskRightMost][j] = currentValue;
+							prefixesPostfixes.at(getIndex(k, firstMaskRightMost, j, cols)) = currentValue;
 						}
 						else {
-							desiredValues[k][firstMaskRightMost][j] = oldValue;
+							prefixesPostfixes.at(getIndex(k, firstMaskRightMost, j, cols)) = oldValue;
 						}
 					}
 				}
 
 
 			for (auto k = secondMaskLeftMost; k <= secondMaskRightMost; ++k)
-				if (!getDesiredValue(desiredValues, secondMaskLeftMost, k, j)) {
+				if (!getDesiredValue(prefixesPostfixes, secondMaskLeftMost, k, j, cols)) {
 					if (k == secondMaskLeftMost) {
 						int testValue = static_cast<int>(this->data.at<uchar>(j, k));
-						desiredValues[secondMaskLeftMost][k][j] = testValue;
+						prefixesPostfixes.at(getIndex(secondMaskLeftMost, k, j, cols)) = testValue;
 					}
 					else {
 						auto currentValue = static_cast<int>(this->data.at<uchar>(j, k));
-						auto oldValue = desiredValues.at(secondMaskLeftMost).at(k - 1).at(j);
+						auto oldValue = prefixesPostfixes.at(getIndex(secondMaskLeftMost, k - 1, j, cols));
 						if (this->compare(currentValue, oldValue)) {
-							desiredValues[secondMaskLeftMost][k][j] = currentValue;
+							prefixesPostfixes.at(getIndex(secondMaskLeftMost, k, j, cols)) = currentValue;
 						}
 						else {
-							desiredValues[secondMaskLeftMost][k][j] = oldValue;
+							prefixesPostfixes.at(getIndex(secondMaskLeftMost, k, j, cols)) = oldValue;
 						}
 					}
 				}
@@ -146,9 +149,9 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskLeftMost, secondMaskRightMost);
 			if (j == firstMaskCentre)
 			{
-				auto bestValue = desiredValues.at(firstMaskLeftMost).at(firstMaskRightMost).at(topMost);
+				auto bestValue = prefixesPostfixes.at(getIndex(firstMaskLeftMost, firstMaskRightMost, topMost, cols));
 				for (auto k = topMost + 1; k <= botMost; ++k) {
-					auto currentValue = desiredValues.at(firstMaskLeftMost).at(firstMaskRightMost).at(k);
+					auto currentValue = prefixesPostfixes.at(getIndex(firstMaskLeftMost, firstMaskRightMost, k, cols));
 					if (this->compare(currentValue, bestValue)) {
 						bestValue = currentValue;
 					}
@@ -157,9 +160,9 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 			}
 			else if (j == secondMaskCentre)
 			{
-				auto bestValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(topMost);
+				auto bestValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost, topMost, cols));
 				for (auto k = topMost + 1; k <= botMost; ++k) {
-					auto currentValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(k);
+					auto currentValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost, k, cols));
 					if (this->compare(currentValue, bestValue)) {
 						bestValue = currentValue;
 					}
@@ -167,8 +170,8 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
 			}
 			else if (auto diff = currentMaskRightMost - firstMaskRightMost; diff > 0) {
-				auto firstPartOfMaskValue = desiredValues.at(currentMaskLeftMost).at(firstMaskRightMost).at(topMost);
-				auto secondPartOfMaskValue = desiredValues.at(secondMaskLeftMost).at(currentMaskRightMost).at(topMost);
+				auto firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskRightMost, topMost, cols));
+				auto secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskLeftMost, currentMaskRightMost, topMost, cols));
 				int bestValue;
 				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 					bestValue = firstPartOfMaskValue;
@@ -177,8 +180,8 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 					bestValue = secondPartOfMaskValue;
 				}
 				for (auto k = topMost + 1; k <= botMost; ++k) {
-					firstPartOfMaskValue = desiredValues.at(currentMaskLeftMost).at(firstMaskRightMost).at(k);
-					secondPartOfMaskValue = desiredValues.at(secondMaskLeftMost).at(currentMaskRightMost).at(k);
+					firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskRightMost, k, cols));
+					secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskLeftMost, currentMaskRightMost, k, cols));
 					if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 						if (this->compare(firstPartOfMaskValue, bestValue)) {
 							bestValue = firstPartOfMaskValue;
