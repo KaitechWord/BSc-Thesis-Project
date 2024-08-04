@@ -13,7 +13,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	int rows = image.rows;
 	int cols = image.cols;
 	int pixelsNum = rows * cols;
-	int threadsNum = 1;//this->tp.getThreadsNum();
+	int threadsNum = 100;//this->tp.getThreadsNum();
 	if (threadsNum > pixelsNum) {
 		std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
 		threadsNum = pixelsNum;
@@ -43,7 +43,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	}
 }
 
-std::optional<int> getDesiredValue(std::map<int, std::map<int, std::map<int, int>>>& desiredValues, int x, int y, int z) {
+std::optional<int> getDesiredValue(std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, int>>>& desiredValues, int x, int y, int z) {
 	auto itX = desiredValues.find(x);
 	if (itX != desiredValues.end()) {
 		auto itY = itX->second.find(y);
@@ -55,25 +55,6 @@ std::optional<int> getDesiredValue(std::map<int, std::map<int, std::map<int, int
 		}
 	}
 	return std::nullopt;  // Value not found
-}
-
-void checkZero(const std::map<int, std::map<int, std::map<int, int>>>& desiredValues)
-{
-	for (const auto& topPair : desiredValues) {
-		const auto& middleMap = topPair.second;
-
-		// Iterate through the middle-level map
-		for (const auto& middlePair : middleMap) {
-			const auto& deepestMap = middlePair.second;
-
-			// Check if key3 exists at the deepest level
-			for (const auto& deepestPair : deepestMap) {
-				if (deepestPair.second == 0) {
-					std::cout << deepestPair.second << " found at: [startIndex] = " << topPair.first << " [lastIndex] = " << middlePair.first << " [depth] = " << deepestPair.first << std::endl;
-				}
-			}
-		}
-	}
 }
 
 void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int firstIndex, int lastIndex) {
@@ -97,7 +78,7 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 	//  z <- row index
 
 	// "i" is always the centre of first mask
-	std::map<int, std::map<int, std::map<int, int>>> desiredValues;
+	std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, int>>> desiredValues;
 	auto lastRowIndex = 0;
 	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + maskSize + 1, lastIndex)) {
 		auto rowIndex = i / cols;
@@ -113,8 +94,9 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 		//change name from leftmost to farleft
 		auto firstMaskLeftMost = std::clamp(colIndex - maskOneHalfLength, 0, cols - 1);
 		auto firstMaskRightMost = std::clamp(colIndex + maskOneHalfLength, 0, cols - 1);
-		auto secondMaskLeftMost = std::clamp(firstMaskRightMost + 1, 0, cols - 1);
-		auto secondMaskRightMost = std::clamp(firstMaskRightMost + this->maskSize, 0, cols - 1);
+		auto preSecondMaskCentre = std::clamp(colIndex + maskSize, 0, cols - 1);
+		auto secondMaskLeftMost = std::clamp(preSecondMaskCentre - maskOneHalfLength, 0, cols - 1);
+		auto secondMaskRightMost = std::clamp(preSecondMaskCentre + maskOneHalfLength, 0, cols - 1);
 		auto topMost = std::clamp(rowIndex - maskOneHalfLength, 0, rows - 1);
 		auto botMost = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
 
@@ -124,18 +106,15 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 					if (k == firstMaskRightMost) {
 						int testValue = static_cast<int>(this->data.at<uchar>(j, k));
 						desiredValues[k][firstMaskRightMost][j] = testValue;
-						checkZero(desiredValues);
 					}
 					else {
 						int currentValue = static_cast<int>(this->data.at<uchar>(j, k));
 						int oldValue = desiredValues.at(k + 1).at(firstMaskRightMost).at(j);
 						if (this->compare(currentValue, oldValue)) {
 							desiredValues[k][firstMaskRightMost][j] = currentValue;
-							checkZero(desiredValues);
 						}
 						else {
 							desiredValues[k][firstMaskRightMost][j] = oldValue;
-							checkZero(desiredValues);
 						}
 					}
 				}
@@ -146,44 +125,19 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 					if (k == secondMaskLeftMost) {
 						int testValue = static_cast<int>(this->data.at<uchar>(j, k));
 						desiredValues[secondMaskLeftMost][k][j] = testValue;
-						checkZero(desiredValues);
 					}
 					else {
 						auto currentValue = static_cast<int>(this->data.at<uchar>(j, k));
 						auto oldValue = desiredValues.at(secondMaskLeftMost).at(k - 1).at(j);
 						if (this->compare(currentValue, oldValue)) {
 							desiredValues[secondMaskLeftMost][k][j] = currentValue;
-							checkZero(desiredValues);
 						}
 						else {
 							desiredValues[secondMaskLeftMost][k][j] = oldValue;
-							checkZero(desiredValues);
 						}
 					}
 				}
 		}
-
-		//add calculating the processed pixels from firstMaskCenter(i) to sceondMaskCentre
-		//tutaj jest zle, bo krancowe wartosci sie wywracaja, nie sprawdzamy ich
-		//tez jest problem bo w ciekawy sposob zapisuje do desiredValues (dla pierwszej maski od konca tej maski, a dla drugiej od jej poczatku)
-		//ponizszego for loopa tez moznaby zapisac z rozroznieniem dla pierwszej i drugiej maski z tego powodu? albo w normalny sposob zapisywac jest do desiredValues
-
-		//isZeroDetected <- na podstawie tego ponizej ogarnij czemu jest zero
-		//for (const auto& topPair : desiredValues) {
-		//	const auto& middleMap = topPair.second;
-
-		//	// Iterate through the middle-level map
-		//	for (const auto& middlePair : middleMap) {
-		//		const auto& deepestMap = middlePair.second;
-
-		//		// Check if key3 exists at the deepest level
-		//		for (const auto& deepestPair : deepestMap) {
-		//			if (deepestPair.second == 0) {
-		//				std::cout << deepestPair.second << " found at: [startIndex] = " << topPair.first << " [lastIndex] = " << middlePair.first << " [depth] = " << deepestPair.first << std::endl;
-		//			}
-		//		}
-		//	}
-		//}
 
 		auto firstMaskCentre = std::clamp(colIndex, firstMaskLeftMost, firstMaskRightMost);
 		auto secondMaskCentre = std::clamp(colIndex + 2 * maskOneHalfLength + 1, secondMaskLeftMost, secondMaskRightMost);
@@ -203,9 +157,9 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 			}
 			else if (j == secondMaskCentre)
 			{
-				auto bestValue = desiredValues.at(secondMaskLeftMost).at(secondMaskRightMost).at(topMost);
+				auto bestValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(topMost);
 				for (auto k = topMost + 1; k <= botMost; ++k) {
-					auto currentValue = desiredValues.at(secondMaskLeftMost).at(secondMaskRightMost).at(k);
+					auto currentValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(k);
 					if (this->compare(currentValue, bestValue)) {
 						bestValue = currentValue;
 					}
@@ -239,56 +193,6 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
 			}
 		}
-
-		/*auto firstMaskCentre = std::clamp(i, firstMaskLeftMost, firstMaskRightMost);
-		auto secondMaskCentre = std::clamp(i + 2 * maskOneHalfLength + 1, secondMaskLeftMost, secondMaskRightMost);
-		for (auto j = firstMaskCentre; j <= secondMaskCentre; ++j) {
-			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskLeftMost, secondMaskRightMost);
-			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskLeftMost, secondMaskRightMost);
-			if (auto diff = currentMaskRightMost - firstMaskRightMost; diff > 0) {
-				int firstPartOfMaskValue = 200;
-				int secondPartOfMaskValue = 200;
-				if (getDesiredValue(desiredValues, currentMaskLeftMost, firstMaskRightMost, topMost))
-					firstPartOfMaskValue = desiredValues[currentMaskLeftMost][firstMaskRightMost][topMost];
-				else
-					std::cout << "didnt find at " << currentMaskLeftMost << " " << firstMaskRightMost << " " << topMost << std::endl;
-				if(getDesiredValue(desiredValues, firstMaskRightMost + diff, currentMaskRightMost, topMost))
-					secondPartOfMaskValue = desiredValues[firstMaskRightMost + diff][currentMaskRightMost][topMost];
-				else
-					std::cout << "didnt find at " << firstMaskRightMost + diff << " " << currentMaskRightMost << " " << topMost << std::endl;
-				int bestValue;
-				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
-					bestValue = firstPartOfMaskValue;
-				}
-				else {
-					bestValue = secondPartOfMaskValue;
-				}
-				for (auto k = topMost + 1; k <= botMost; ++k) {
-					firstPartOfMaskValue = desiredValues[currentMaskLeftMost][firstMaskRightMost][k];
-					secondPartOfMaskValue = desiredValues[firstMaskRightMost + diff][currentMaskRightMost][k];
-					if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
-						if (this->compare(firstPartOfMaskValue, bestValue)) {
-							bestValue = firstPartOfMaskValue;
-						}
-					}
-					else {
-						if (this->compare(secondPartOfMaskValue, bestValue)) {
-							bestValue = secondPartOfMaskValue;
-						}
-					}
-				}
-				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
-				continue;
-			}
-			auto bestValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(topMost);
-			for (auto k = topMost + 1; k <= botMost; ++k) {
-				auto currentValue = desiredValues.at(currentMaskLeftMost).at(currentMaskRightMost).at(k);
-				if (this->compare(currentValue, bestValue)) {
-					bestValue = currentValue;
-				}
-			}
-			newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
-		}*/
 
 		if (i == lastIndex)
 			break;

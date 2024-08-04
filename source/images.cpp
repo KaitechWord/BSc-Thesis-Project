@@ -49,19 +49,11 @@ int main(int argc, char* argv[]) {
     fileManager.loadImageFromFile(imageInfo.dataPath);
     cv::Mat testImage;
     fileManager.getLoadedImage(testImage);
-    for (int i = 0; i < image.rows; i++) {
-        for (int j = 0; j < image.cols; j++) {
-            if (static_cast<int>(testImage.at<uchar>(i, j)) == 0) {
-                std::cout << "contains 0 at (" << i << ", " << j << ")\n";
-                break;
-            }
-        }
-    }
     // ~TESTING PURPOSES
 
     SmartImageFilter SIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
     SIF.apply(image);
-    fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/imageResultBigger.png");
+    fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/imageResult.png");
 
     // TESTING - MIN VARIANT ONLY
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(imageInfo.maskSize, imageInfo.maskSize));
@@ -69,7 +61,7 @@ int main(int argc, char* argv[]) {
     cv::imshow("changed", image);
     cv::imshow("test", testImage);
     cv::waitKey(10000);
-    fileManager.saveImageToFile(testImage, std::string(ROOT_DIR) + "/testImageResultBigger.png");
+    fileManager.saveImageToFile(testImage, std::string(ROOT_DIR) + "/testImageResult.png");
 
     //Uncomment one line below to fail the test for sure
     //testImage.at<uchar>(0, 0) = '1';
