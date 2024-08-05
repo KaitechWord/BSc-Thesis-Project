@@ -11,7 +11,7 @@ void NaiveImageFilter::apply(cv::Mat& image) {
     int rowSize = image.rows;
     int colSize = image.cols;
     int pixelsNum = rowSize * colSize;
-    int threadsNum = 1;//this->tp.getThreadsNum();
+    int threadsNum = 10;//this->tp.getThreadsNum();
     if (threadsNum > pixelsNum) {
         std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
         threadsNum = pixelsNum;
@@ -35,8 +35,9 @@ void NaiveImageFilter::apply(cv::Mat& image) {
         int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
         int partOfimageIndex = 0;
         int rowSize = this->data.rows;
+        int colSize = this->data.cols;
         for (int j = firstIndex; j <= lastIndex; j++) {
-            image.at<uchar>(j / rowSize, j % rowSize) = partsOfImage[i]->at<uchar>(j / rowSize, j % rowSize);
+            image.at<uchar>(j / colSize, j % colSize) = partsOfImage[i]->at<uchar>(j / colSize, j % colSize);
         }
     }
 }

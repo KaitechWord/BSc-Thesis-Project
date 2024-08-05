@@ -1,5 +1,5 @@
 {
-    "ThreadsNumber": 12,
+    "ThreadsNumber": 10,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
@@ -9,7 +9,7 @@
     "ImageFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
-                        "DataPath": "/data/diffSize.jpg",
+                        "DataPath": "/data/highResTooLong.jpg",
                         "MaskSideSize": 5
                     }
 }
