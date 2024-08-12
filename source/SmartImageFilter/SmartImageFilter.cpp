@@ -13,7 +13,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	int rows = image.rows;
 	int cols = image.cols;
 	int pixelsNum = rows * cols;
-	int threadsNum = 1;//this->tp.getThreadsNum();
+	int threadsNum = 13;//this->tp.getThreadsNum();
 	if (threadsNum > pixelsNum) {
 		std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
 		threadsNum = pixelsNum;
@@ -63,10 +63,10 @@ inline int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSi
 	//return startColIndex + endColIndex * colsSize + rowIndex * colsSize * colsSize;
 }
 
-std::optional<uint8_t> getDesiredValue(const std::vector<uint8_t>& prefixesPostfixes, int x, int y, int z, int colsSize, int maskSize) {
-	auto value = prefixesPostfixes.at(getIndex(x, y, z, colsSize, maskSize));
-	return value == -1 ? std::nullopt : std::optional(value);
-}
+//std::optional<uint8_t> getDesiredValue(const std::vector<uint8_t>& prefixesPostfixes, int x, int y, int z, int colsSize, int maskSize) {
+//	auto value = prefixesPostfixes.at(getIndex(x, y, z, colsSize, maskSize));
+//	return value == -1 ? std::nullopt : std::optional(value);
+//}
 
 void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int firstIndex, int lastIndex) {
 	int imageSize = this->data.rows * this->data.cols;
@@ -119,7 +119,7 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 	//std::vector<int> prefixesPostfixes(cols * cols * cols + cols * cols + rows, -1);
 	//nie musze przetrzymywac wszystkich wartosci, jedynie dla aktualnej maski 
 	//wspomij o uint8_t
-	std::vector<uint8_t> prefixesPostfixes(cols * maskSize * maskSize);
+	std::vector<uchar> prefixesPostfixes(cols * maskSize * maskSize);
 	auto lastRowIndex = 0;
 	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + maskSize + 1, lastIndex)) {
 		auto rowIndex = i / cols;
@@ -140,98 +140,80 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 		auto farBotIndex = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
 
 		for (auto j = farTopIndex; j <= farBotIndex; ++j) {
-			for (auto k = firstMaskFarRightIndex; k >= firstMaskFarLeftIndex; --k)
-				//if (!getDesiredValue(prefixesPostfixes, k, firstMaskFarRightIndex, j, cols, maskSize)) {
-				if (k == firstMaskFarRightIndex) {
-					auto testValue = static_cast<uint8_t>(this->data.at<uchar>(j, k));
-					prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = testValue;
+			prefixesPostfixes.at(getIndex(firstMaskFarRightIndex, 0, j % maskSize, cols, maskSize)) = this->data.at<uchar>(j, firstMaskFarRightIndex);
+			for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
+				auto currentValue = this->data.at<uchar>(j, k);
+				auto oldValue = prefixesPostfixes.at(getIndex(k + 1, firstMaskFarRightIndex - (k + 1), j % maskSize, cols, maskSize));
+				if (this->compare(currentValue, oldValue)) {
+					prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = currentValue;
 				}
 				else {
-					auto currentValue = static_cast<uint8_t>(this->data.at<uchar>(j, k));
-					auto oldValue = prefixesPostfixes.at(getIndex(k + 1, firstMaskFarRightIndex - (k + 1), j % maskSize, cols, maskSize));
-					if (this->compare(currentValue, oldValue)) {
-						prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = currentValue;
-					}
-					else {
-						prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = oldValue;
-					}
+					prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = oldValue;
 				}
-			//}
+			}
 
-
-			for (auto k = secondMaskFarLeftIndex; k <= secondMaskFarRightIndex; ++k)
-				//if (!getDesiredValue(prefixesPostfixes, secondMaskFarLeftIndex, k, j, cols, maskSize)) {
-				if (k == secondMaskFarLeftIndex) {
-					auto testValue = static_cast<uint8_t>(this->data.at<uchar>(j, k));
-					prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = testValue;
+			prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, 0, j % maskSize, cols, maskSize)) = this->data.at<uchar>(j, secondMaskFarLeftIndex);
+			for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
+				auto currentValue = this->data.at<uchar>(j, k);
+				auto oldValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, j % maskSize, cols, maskSize));
+				if (this->compare(currentValue, oldValue)) {
+					prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = currentValue;
 				}
 				else {
-					auto currentValue = static_cast<uint8_t>(this->data.at<uchar>(j, k));
-					auto oldValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, j % maskSize, cols, maskSize));
-					if (this->compare(currentValue, oldValue)) {
-						prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = currentValue;
-					}
-					else {
-						prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = oldValue;
-					}
+					prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = oldValue;
 				}
-			//}
+			}
 		}
 
 		auto firstMaskCentreIndex = std::clamp(colIndex, firstMaskFarLeftIndex, firstMaskFarRightIndex);
 		auto secondMaskCentreIndex = std::clamp(colIndex + 2 * maskOneHalfLength + 1, secondMaskFarLeftIndex, secondMaskFarRightIndex);
-		for (auto j = firstMaskCentreIndex; j <= secondMaskCentreIndex; ++j) {
-			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-			if (j == firstMaskCentreIndex)
-			{
-				auto bestValue = prefixesPostfixes.at(getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize));
-				for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-					auto currentValue = prefixesPostfixes.at(getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, k % maskSize, cols, maskSize));
-					if (this->compare(currentValue, bestValue)) {
-						bestValue = currentValue;
-					}
-				}
-				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
-			}
-			else if (j == secondMaskCentreIndex)
-			{
-				auto bestValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize));
-				for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-					auto currentValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, k % maskSize, cols, maskSize));
-					if (this->compare(currentValue, bestValue)) {
-						bestValue = currentValue;
-					}
-				}
-				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
-			}
-			else if (auto diff = currentMaskRightMost - firstMaskFarRightIndex; diff > 0) {
-				auto firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize));
-				auto secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize));
-				int bestValue;
-				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
-					bestValue = firstPartOfMaskValue;
-				}
-				else {
-					bestValue = secondPartOfMaskValue;
-				}
-				for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-					firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, k % maskSize, cols, maskSize));
-					secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, k % maskSize, cols, maskSize));
-					if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
-						if (this->compare(firstPartOfMaskValue, bestValue)) {
-							bestValue = firstPartOfMaskValue;
-						}
-					}
-					else {
-						if (this->compare(secondPartOfMaskValue, bestValue)) {
-							bestValue = secondPartOfMaskValue;
-						}
-					}
-				}
-				newPartOfimage->at<uchar>(rowIndex, j) = static_cast<uchar>(bestValue);
+
+		auto bestValue = prefixesPostfixes.at(getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize));
+		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+			auto currentValue = prefixesPostfixes.at(getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, k % maskSize, cols, maskSize));
+			if (this->compare(currentValue, bestValue)) {
+				bestValue = currentValue;
 			}
 		}
+		newPartOfimage->at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
+		for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
+			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+			auto firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize));
+			auto secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize));
+			int bestValue;
+			if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+				bestValue = firstPartOfMaskValue;
+			}
+			else {
+				bestValue = secondPartOfMaskValue;
+			}
+			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+				firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, k % maskSize, cols, maskSize));
+				secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, k % maskSize, cols, maskSize));
+				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+					if (this->compare(firstPartOfMaskValue, bestValue)) {
+						bestValue = firstPartOfMaskValue;
+					}
+				}
+				else {
+					if (this->compare(secondPartOfMaskValue, bestValue)) {
+						bestValue = secondPartOfMaskValue;
+					}
+				}
+			}
+			newPartOfimage->at<uchar>(rowIndex, j) = bestValue;
+		}
+		auto currentMaskLeftMost = std::clamp(secondMaskCentreIndex - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+		auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+		bestValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize));
+		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+			auto currentValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, k % maskSize, cols, maskSize));
+			if (this->compare(currentValue, bestValue)) {
+				bestValue = currentValue;
+			}
+		}
+		newPartOfimage->at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
 
 		if (i == lastIndex)
 			break;
