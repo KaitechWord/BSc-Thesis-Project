@@ -13,7 +13,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	int rows = image.rows;
 	int cols = image.cols;
 	int pixelsNum = rows * cols;
-	int threadsNum = 13;//this->tp.getThreadsNum();
+	int threadsNum = this->tp.getThreadsNum();
 	if (threadsNum > pixelsNum) {
 		std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
 		threadsNum = pixelsNum;

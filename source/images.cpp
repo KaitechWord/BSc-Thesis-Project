@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     fileManager.getLoadedImage(testImage);
     // ~TESTING PURPOSES
 
-    SmartImageFilter SIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
+    NaiveImageFilter SIF(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize);
     SIF.apply(image);
     fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/imageResult.png");
 
