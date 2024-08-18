@@ -7,8 +7,8 @@
                         "MaskSize": 5
                     },
     "ImageFilter": {
-                        "Variant": "MIN",
-                        "Approach": "NAIVE",
+                        "Variant": "MAX",
+                        "Approach": "SMART",
                         "DataPath": "/data/highresTooLong.jpg",
                         "MaskSideSize": 5
                     }
