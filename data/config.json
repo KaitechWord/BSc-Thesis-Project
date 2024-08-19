@@ -10,6 +10,6 @@
                         "Variant": "MIN",
                         "Approach": "NAIVE",
                         "DataPath": "/data/highResTooLong.jpg",
-                        "MaskSideSize": 5
+                        "MaskSize": 5
                     }
 }

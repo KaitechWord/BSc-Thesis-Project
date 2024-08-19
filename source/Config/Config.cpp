@@ -26,7 +26,7 @@ void Config::getInfo(FilterInfo &filterInfo, InfoToRead type){
             variant = this->pt.get<std::string>("ImageFilter.Variant");
             approach = this->pt.get<std::string>("ImageFilter.Approach");
             filterInfo.dataPath = std::string(ROOT_DIR) + this->pt.get<std::string>("ImageFilter.DataPath");
-            filterInfo.maskSize = this->pt.get<int>("ImageFilter.MaskSideSize");
+            filterInfo.maskSize = this->pt.get<int>("ImageFilter.MaskSize");
             break;
     }
     this->verifyInfo(filterInfo, variant, approach);
