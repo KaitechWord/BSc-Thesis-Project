@@ -7,5 +7,11 @@ project(Signal
 project(Image
         VERSION 1.0
         LANGUAGES CXX)
+        
+project(ImageTests
+        VERSION 1.0
+        LANGUAGES CXX)
+
+enable_testing()
 
 include(source/CMakeLists.txt)

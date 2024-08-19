@@ -1,8 +1,8 @@
 #pragma once
-#include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include "FilterInfo.h"
+#include <nlohmann/json.hpp>
+#include <string>
+
 
 enum class InfoToRead{
     SIGNAL,
@@ -22,5 +22,5 @@ class Config{
         Config(const std::string &filePath);
         ~Config();
         void verifyInfo(FilterInfo &filterInfo, std::string &variant, std::string &approach);
-        boost::property_tree::ptree pt;
+        nlohmann::json json;
 };
