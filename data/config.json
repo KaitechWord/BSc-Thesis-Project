@@ -8,7 +8,7 @@
                     },
     "ImageFilter": {
                         "Variant": "MIN",
-                        "Approach": "smart",
+                        "Approach": "NAIVE",
                         "DataPath": "/data/highResTooLong.jpg",
                         "MaskSize": 5
                     }

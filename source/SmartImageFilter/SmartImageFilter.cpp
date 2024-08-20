@@ -56,7 +56,6 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 	auto maskOneHalfLength = this->maskSize / 2;
 	//Starting value is set in base class in regards to algType
 	auto targetValue = this->startingValue;
-	auto t1 = std::chrono::high_resolution_clock::now();
 	//Flatten 3D array
 	std::vector<uchar> prefixesPostfixes(cols * maskSize * maskSize);
 	auto lastRowIndex = 0;
@@ -166,8 +165,4 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 		if (i == lastIndex)
 			break;
 	}
-
-	auto t2 = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double, std::milli> ms_double = t2 - t1;
-	std::cout << ms_double.count() << "ms\n";
 }

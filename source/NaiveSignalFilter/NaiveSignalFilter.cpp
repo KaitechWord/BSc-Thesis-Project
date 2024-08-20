@@ -46,7 +46,6 @@ void NaiveSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
     int indexOfTargetValue = firstIndex - maskOneHalfLength;
     //Starting value is set in base class in regards to algType
     int targetValue = this->startingValue;
-    auto t1 = std::chrono::high_resolution_clock::now();
     for(int i = firstIndex; i <= lastIndex; i++){
         int leftMostIndexOfMask = i - maskOneHalfLength;
         //Protects us against going out of bounds from left side
@@ -77,7 +76,4 @@ void NaiveSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
         }
         newPartOfSignal->pushBack(targetValue);
     }
-    auto t2 = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> ms_double = t2 - t1;
-    std::cout << ms_double.count() << "ms\n";
 }

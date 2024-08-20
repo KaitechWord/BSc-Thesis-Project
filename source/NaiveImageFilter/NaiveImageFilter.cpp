@@ -54,7 +54,6 @@ void NaiveImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	auto maskOneHalfLength = this->maskSize / 2;
 	//Starting value is set in base class in regards to algType
 	auto targetValue = this->startingValue;
-	auto t1 = std::chrono::high_resolution_clock::now();
 	auto rowOfTargetValue = std::min(firstIndexRow - maskOneHalfLength, rowSize);
 	auto colOfTargetValue = std::max(0, firstIndexCol - maskOneHalfLength);
 	auto lastRow = firstIndexRow;
@@ -150,7 +149,4 @@ void NaiveImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 
 		newImage.at<uchar>(rowIndex, colIndex) = static_cast<uchar>(targetValue);
 	}
-	auto t2 = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double, std::milli> ms_double = t2 - t1;
-	std::cout << ms_double.count() << "ms\n";
 }
