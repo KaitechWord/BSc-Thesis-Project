@@ -1,6 +1,12 @@
 #include "NaiveImageFilter.h"
 #include <iostream>
 #include <chrono>
+#include <fstream>
+
+static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/NaiveMinSingle.txt";
+static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/NaiveMinMulti.txt";
+static const auto maxSingleTextFile = std::string(ROOT_DIR) + "/output/NaiveMaxSingle.txt";
+static const auto maxMultiTextFile = std::string(ROOT_DIR) + "/output/NaiveMaxMulti.txt";
 
 NaiveImageFilter::NaiveImageFilter(int threadNum, AlgorithmType algType, int maskSize)
 	: ImageFilter(threadNum, algType, maskSize)
@@ -20,13 +26,23 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 	auto remainder = pixelsNum % threadsNum;
 	cv::Mat newImage(rowSize, colSize, image.type());
 
-	this->tp.start();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
 		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
 	}
+
+	const auto start = std::chrono::high_resolution_clock::now();
+	this->tp.start();
 	while (this->tp.busy()) {};
+	const auto end = std::chrono::high_resolution_clock::now();
+	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
+	std::cout << "Naive " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
+	const auto textFile = this->algType == AlgorithmType::MIN ? (this->tp.getThreadsNum() == 1 ? minSingleTextFile : minMultiTextFile) : (this->tp.getThreadsNum() == 1 ? maxSingleTextFile : maxMultiTextFile);
+	std::ofstream outfile;
+	outfile.open(textFile, std::ios_base::app);
+	if (outfile.is_open())
+		outfile << execTime << "\n";
 	this->tp.stop();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);

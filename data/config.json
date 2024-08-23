@@ -1,5 +1,5 @@
 {
-    "ThreadsNumber": 10,
+    "ThreadsNumber": 15,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
@@ -7,8 +7,8 @@
                         "MaskSize": 5
                     },
     "ImageFilter": {
-                        "Variant": "MIN",
-                        "Approach": "NAIVE",
+                        "Variant": "MAX",
+                        "Approach": "SMART",
                         "DataPath": "/data/highResTooLong.jpg",
                         "MaskSize": 5
                     }

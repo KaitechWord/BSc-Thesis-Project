@@ -1,8 +1,12 @@
 #include "SmartImageFilter.h"
 #include <iostream>
 #include <chrono>
-#include <map>
-#include <optional>
+#include <fstream>
+
+static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SmartMinSingle.txt";
+static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SmartMinMulti.txt";
+static const auto maxSingleTextFile = std::string(ROOT_DIR) + "/output/SmartMaxSingle.txt";
+static const auto maxMultiTextFile = std::string(ROOT_DIR) + "/output/SmartMaxMulti.txt";
 
 SmartImageFilter::SmartImageFilter(int threadNum, AlgorithmType algType, int maskSize)
 	: ImageFilter(threadNum, algType, maskSize)
@@ -22,7 +26,6 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	auto remainder = pixelsNum % threadsNum;
 	std::vector<std::shared_ptr<cv::Mat>> partsOfImage;
 
-	this->tp.start();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
@@ -30,7 +33,15 @@ void SmartImageFilter::apply(cv::Mat& image) {
 		std::shared_ptr<cv::Mat> partOfImage = partsOfImage.back();
 		this->tp.queueJob([this, partOfImage, firstIndex, lastIndex]() { this->filter(partOfImage, firstIndex, lastIndex); });
 	}
+	auto start = std::chrono::high_resolution_clock::now();
+	tp.start();
 	while (this->tp.busy()) {};
+	auto end = std::chrono::high_resolution_clock::now();
+	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << std::chrono::duration<double, std::milli>(end - start).count() << "ms.\n";
+	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
+	const auto textFile = this->algType == AlgorithmType::MIN ? (this->tp.getThreadsNum() == 1 ? minSingleTextFile : minMultiTextFile) : (this->tp.getThreadsNum() == 1 ? maxSingleTextFile : maxMultiTextFile);
+	if (std::ofstream outfile(textFile, std::ios_base::app); outfile.is_open())
+		outfile << execTime << "\n";
 	this->tp.stop();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
