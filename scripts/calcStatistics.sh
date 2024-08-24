@@ -6,7 +6,7 @@ deletePreviousRecordsPath="./output/*.txt"
 
 # Check if the correct number of arguments is provided
 if [ "$#" -lt 4 ]; then
-    echo "Usage: $0 <number_of_repetitions> <number_of_threads> <mask_size> <file_path>"
+    echo "Usage: $0 <number_of_repetition> <number_of_threads> <mask_size> <file_path>"
     exit 1
 fi
 
