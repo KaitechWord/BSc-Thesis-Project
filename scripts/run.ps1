@@ -1,1 +1,1 @@
-./build/Signal.exe
+./bin/Image.exe

@@ -1,2 +1,2 @@
 #!/bin/sh
-./build/Image
+./bin/Image
