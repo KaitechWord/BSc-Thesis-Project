@@ -24,15 +24,15 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	}
 	auto sizeOfOneThread = pixelsNum / threadsNum;
 	auto remainder = pixelsNum % threadsNum;
-	std::vector<std::shared_ptr<cv::Mat>> partsOfImage;
 
+	cv::Mat newImage(rows, cols, image.type());
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		partsOfImage.emplace_back(std::make_shared<cv::Mat>(rows, cols, image.type()));
-		std::shared_ptr<cv::Mat> partOfImage = partsOfImage.back();
-		this->tp.queueJob([this, partOfImage, firstIndex, lastIndex]() { this->filter(partOfImage, firstIndex, lastIndex); });
+		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
 	}
+
+	tp.prepareThreads();
 	auto start = std::chrono::high_resolution_clock::now();
 	tp.start();
 	while (this->tp.busy()) {};
@@ -40,8 +40,12 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << std::chrono::duration<double, std::milli>(end - start).count() << "ms.\n";
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
 	const auto textFile = this->algType == AlgorithmType::MIN ? (this->tp.getThreadsNum() == 1 ? minSingleTextFile : minMultiTextFile) : (this->tp.getThreadsNum() == 1 ? maxSingleTextFile : maxMultiTextFile);
-	if (std::ofstream outfile(textFile, std::ios_base::app); outfile.is_open())
+	std::ofstream outfile;
+	outfile.open(textFile, std::ios_base::app);
+	if (outfile.is_open())
 		outfile << execTime << "\n";
+	else
+		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
 	this->tp.stop();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
@@ -49,7 +53,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 		auto partOfimageIndex = 0;
 		auto colSize = this->data.cols;
 		for (auto j = firstIndex; j <= lastIndex; ++j) {
-			image.at<uchar>(j / colSize, j % colSize) = partsOfImage[i]->at<uchar>(j / colSize, j % colSize);
+			image.at<uchar>(j / colSize, j % colSize) = newImage.at<uchar>(j / colSize, j % colSize);
 		}
 	}
 }
@@ -59,7 +63,7 @@ inline int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSi
 	return startColIndex * maskSize * maskSize + endColIndex * maskSize + rowIndex;
 }
 
-void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int firstIndex, int lastIndex) {
+void SmartImageFilter::filter(cv::Mat &newImage, int firstIndex, int lastIndex) {
 	auto imageSize = this->data.rows * this->data.cols;
 	auto rows = this->data.rows;
 	auto cols = this->data.cols;
@@ -129,7 +133,7 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 				bestValue = currentValue;
 			}
 		}
-		newPartOfimage->at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
+		newImage.at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
 		//Finding best value for indices that are mix of prefixes from first mask and postfixes from second mask
 		for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
 			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
@@ -158,7 +162,7 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 					}
 				}
 			}
-			newPartOfimage->at<uchar>(rowIndex, j) = bestValue;
+			newImage.at<uchar>(rowIndex, j) = bestValue;
 		}
 		auto currentMaskLeftMost = std::clamp(secondMaskCentreIndex - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
 		auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
@@ -171,7 +175,7 @@ void SmartImageFilter::filter(std::shared_ptr<cv::Mat> newPartOfimage, int first
 				bestValue = currentValue;
 			}
 		}
-		newPartOfimage->at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
+		newImage.at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
 
 		if (i == lastIndex)
 			break;

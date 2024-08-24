@@ -4,12 +4,4 @@
 
 /build
 /imageResult.png
-/bin/Image.exe
-/bin/Image.pdb
-/bin/ImageTests.exe
-/bin/ImageTests.pdb
-/bin/Signal.exe
-/bin/Signal.pdb
-/bin/Statistics.exe
-/bin/Statistics.pdb
-/bin/zlib1.dll
+/bin/*

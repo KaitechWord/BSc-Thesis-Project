@@ -24,14 +24,15 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 	}
 	auto sizeOfOneThread = pixelsNum / threadsNum;
 	auto remainder = pixelsNum % threadsNum;
-	cv::Mat newImage(rowSize, colSize, image.type());
 
+	cv::Mat newImage(rowSize, colSize, image.type());
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
 		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
 	}
 
+	tp.prepareThreads();
 	const auto start = std::chrono::high_resolution_clock::now();
 	this->tp.start();
 	while (this->tp.busy()) {};
@@ -43,6 +44,8 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 	outfile.open(textFile, std::ios_base::app);
 	if (outfile.is_open())
 		outfile << execTime << "\n";
+	else
+		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
 	this->tp.stop();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
