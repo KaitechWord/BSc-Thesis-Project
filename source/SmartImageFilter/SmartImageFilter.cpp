@@ -25,17 +25,17 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	auto sizeOfOneThread = pixelsNum / threadsNum;
 	auto remainder = pixelsNum % threadsNum;
 
+	std::vector<std::thread> threads;
 	cv::Mat newImage(rows, cols, image.type());
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
+		threads.emplace_back(std::thread(&SmartImageFilter::filter, this, std::ref(newImage), firstIndex, lastIndex));
 	}
 
-	tp.prepareThreads();
 	auto start = std::chrono::high_resolution_clock::now();
-	tp.start();
-	while (this->tp.busy()) {};
+	for (auto& thread : threads)
+		thread.join();
 	auto end = std::chrono::high_resolution_clock::now();
 	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << std::chrono::duration<double, std::milli>(end - start).count() << "ms.\n";
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
@@ -63,7 +63,7 @@ inline int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSi
 	return startColIndex * maskSize * maskSize + endColIndex * maskSize + rowIndex;
 }
 
-void SmartImageFilter::filter(cv::Mat &newImage, int firstIndex, int lastIndex) {
+void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) {
 	auto imageSize = this->data.rows * this->data.cols;
 	auto rows = this->data.rows;
 	auto cols = this->data.cols;

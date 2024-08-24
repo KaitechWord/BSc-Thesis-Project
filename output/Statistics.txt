@@ -1,40 +1,40 @@
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMinSingle.txt is:
-0.1717
+0.158
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMinSingle.txt is:
-0.24694
+0.2319
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMinMulti.txt is:
-855.907
+780.696
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMinMulti.txt is:
-808.817
+936.413
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMaxSingle.txt is:
-0.1549
+0.1469
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMaxSingle.txt is:
-0.2874
+0.25718
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMaxMulti.txt is:
-890.619
+746.515
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/NaiveMaxMulti.txt is:
-909.005
+767.72
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMinSingle.txt is:
-0.1277
+10214.4
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMinSingle.txt is:
-0.13112
+10225.8
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMinMulti.txt is:
-1184.08
+1304.08
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMinMulti.txt is:
-1167.22
+1362.3
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMaxSingle.txt is:
-0.1307
+10150.4
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMaxSingle.txt is:
-0.2135
+10142.4
 
 Median for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMaxMulti.txt is:
-1170.51
+1281.75
 Average for file C:/Users/FTG_/Documents/INZYNIERKA/BSc-Thesis-Project/output/SmartMaxMulti.txt is:
-1074.32
+1293.39
 

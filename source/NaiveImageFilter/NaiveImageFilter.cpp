@@ -25,17 +25,17 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 	auto sizeOfOneThread = pixelsNum / threadsNum;
 	auto remainder = pixelsNum % threadsNum;
 
+	std::vector<std::thread> threads;
 	cv::Mat newImage(rowSize, colSize, image.type());
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
+		threads.emplace_back(std::thread(&NaiveImageFilter::filter, this, std::ref(newImage), firstIndex, lastIndex));
 	}
 
-	tp.prepareThreads();
 	const auto start = std::chrono::high_resolution_clock::now();
-	this->tp.start();
-	while (this->tp.busy()) {};
+	for (auto& thread : threads)
+		thread.join();
 	const auto end = std::chrono::high_resolution_clock::now();
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
 	std::cout << "Naive " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
