@@ -21,6 +21,6 @@
 * to run the project: ./scripts/run.(sh/ps1)<br/>
 * to run the project unit tests: ./scripts/runTests.(sh/ps1)<br/>
 * to calculate the median/average execution time of all filters: 
-* * ./scripts/calcStatistics.(sh/ps1) <number_of_repetitions> <number_of_threads> <mask_size> <file_path>
+* * ./scripts/calcStatistics.(sh/ps1) (number_of_repetitions) (number_of_threads) (mask_size) (file_path)
 * It is possible to run project with custom arguments, but the correct way is to use config file, same rules as in 2. are applied:
-* * ./bin/Image(.exe) <number_of_threads> <variant> <approach> <file_path> <mask_size>
+* * ./bin/Image(.exe) (number_of_threads) (variant) (approach) (file_path) (mask_size)
