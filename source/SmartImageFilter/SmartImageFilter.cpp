@@ -48,6 +48,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	else
 		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
 	this->tp.stop();
+	// image = newImage; //for some reason it doesnt work, even std::move doesnt work
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
