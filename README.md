@@ -19,8 +19,11 @@
 * to build the project: ./scripts/build.(sh/ps1)<br/>
 * to clean the project: ./scripts/clean.(sh/ps1)<br/>
 * to run the project: ./scripts/run.(sh/ps1)<br/>
+* * result image is saved in ./output/imageResult.png
 * to run the project unit tests: ./scripts/runTests.(sh/ps1)<br/>
 * to calculate the median/average execution time of all filters: 
 * * ./scripts/calcStatistics.(sh/ps1) (number_of_repetitions) (number_of_threads) (mask_size) (file_path)
+* * results are saved in ./output/statistics.txt
+* * execution times can be viewed in other txts files in that directory
 * It is possible to run project with custom arguments, but the correct way is to use config file, same rules as in 2. are applied:
 * * ./bin/Image(.exe) (number_of_threads) (variant) (approach) (file_path) (mask_size)
