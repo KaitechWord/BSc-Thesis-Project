@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 	if (argc == 1) {
 		config.getInfo(imageInfo, InfoToRead::IMAGE);
 	}
-	else if(argc == 6){
+	else if (argc == 6) {
 		imageInfo.threadsNum = std::stoi(argv[1]);
 		imageInfo.variant = std::stoi(argv[2]) == static_cast<int>(AlgorithmType::MIN) ? AlgorithmType::MIN : AlgorithmType::MAX;
 		imageInfo.approach = std::stoi(argv[3]) == static_cast<int>(FilterApproach::NAIVE) ? FilterApproach::NAIVE : FilterApproach::SMART;
@@ -35,7 +35,9 @@ int main(int argc, char* argv[]) {
 	std::unique_ptr<ImageFilter> imageFilter = imageInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< ImageFilter >(std::make_unique<NaiveImageFilter>(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize))
 		: std::unique_ptr< ImageFilter >(std::make_unique<SmartImageFilter>(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize));
 	imageFilter->apply(image);
-	fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/output/imageResult.png");
+	//save only when used with config file
+	if (argc == 1)
+		fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/output/imageResult.png");
 
 	return 0;
 }
