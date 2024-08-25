@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define paths
-exePath="./bin/Image.exe"
+exePath="./bin/Image"
 deletePreviousRecordsPath="./output/*.txt"
 
 # Check if the correct number of arguments is provided
@@ -46,4 +46,4 @@ for ((i=0; i<runCount; i++)); do
 done
 
 # Run the Statistics executable
-./bin/Statistics.exe
+./bin/Statistics

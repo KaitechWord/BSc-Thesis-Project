@@ -51,7 +51,7 @@ int main() {
 		std::vector<float> fileNumbers;
 		auto& file = files.at(i);
 		const auto& filePath = filesPaths.at(i);
-		file.open(filePath, std::ios_base::beg);
+		file.open(filePath, std::ios_base::out);
 		if (file.is_open())
 		{
 			float number;
