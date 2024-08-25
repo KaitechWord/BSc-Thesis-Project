@@ -47,7 +47,6 @@ void SmartImageFilter::apply(cv::Mat& image) {
 		outfile << execTime << "\n";
 	else
 		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
-	this->tp.stop();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
