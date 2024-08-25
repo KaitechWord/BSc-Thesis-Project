@@ -5,7 +5,7 @@
 
 class ImageFilter : public Filter<cv::Mat> {
 public:
-    ImageFilter(int threadNum, AlgorithmType algType, int maskSize);
+    ImageFilter(int threadsNum, AlgorithmType algType, int maskSize);
 protected:
     int maskSize;
 };

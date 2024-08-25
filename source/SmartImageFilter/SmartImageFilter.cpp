@@ -17,7 +17,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	auto rows = image.rows;
 	auto cols = image.cols;
 	auto pixelsNum = rows * cols;
-	auto threadsNum = this->tp.getThreadsNum();
+	auto threadsNum = this->threadNum;
 	if (threadsNum > pixelsNum) {
 		std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
 		threadsNum = pixelsNum;
@@ -27,20 +27,18 @@ void SmartImageFilter::apply(cv::Mat& image) {
 
 	std::vector<std::thread> threads;
 	cv::Mat newImage(rows, cols, image.type());
+	auto start = std::chrono::high_resolution_clock::now();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
+		threads.emplace_back(std::thread(&SmartImageFilter::filter, this, std::ref(newImage), firstIndex, lastIndex));
 	}
-
-	tp.prepareThreads();
-	auto start = std::chrono::high_resolution_clock::now();
-	tp.start();
-	while (this->tp.busy()) {};
+	for (auto& thread : threads)
+		thread.join();
 	auto end = std::chrono::high_resolution_clock::now();
-	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << std::chrono::duration<double, std::milli>(end - start).count() << "ms.\n";
+	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << std::chrono::duration<double, std::milli>(end - start).count() << "ms.\n";
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
-	const auto textFile = this->algType == AlgorithmType::MIN ? (this->tp.getThreadsNum() == 1 ? minSingleTextFile : minMultiTextFile) : (this->tp.getThreadsNum() == 1 ? maxSingleTextFile : maxMultiTextFile);
+	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
 	std::ofstream outfile;
 	outfile.open(textFile, std::ios_base::app);
 	if (outfile.is_open())

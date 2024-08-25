@@ -14,10 +14,10 @@ NaiveImageFilter::NaiveImageFilter(int threadNum, AlgorithmType algType, int mas
 
 void NaiveImageFilter::apply(cv::Mat& image) {
 	this->data = image;
-	auto rowSize = image.rows;
-	auto colSize = image.cols;
-	auto pixelsNum = rowSize * colSize;
-	auto threadsNum = this->tp.getThreadsNum();
+	auto rows = image.rows;
+	auto cols = image.cols;
+	auto pixelsNum = rows * cols;
+	auto threadsNum = this->threadNum;
 	if (threadsNum > pixelsNum) {
 		std::cout << "The number of threads is bigger than the size of the image. Setting number of threads to size.\n";
 		threadsNum = pixelsNum;
@@ -26,28 +26,25 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 	auto remainder = pixelsNum % threadsNum;
 
 	std::vector<std::thread> threads;
-	cv::Mat newImage(rowSize, colSize, image.type());
+	cv::Mat newImage(rows, cols, image.type());
+	auto start = std::chrono::high_resolution_clock::now();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		this->tp.queueJob([this, &newImage, firstIndex, lastIndex]() { this->filter(newImage, firstIndex, lastIndex); });
+		threads.emplace_back(std::thread(&NaiveImageFilter::filter, this, std::ref(newImage), firstIndex, lastIndex));
 	}
-
-	tp.prepareThreads();
-	const auto start = std::chrono::high_resolution_clock::now();
-	this->tp.start();
-	while (this->tp.busy()) {};
-	const auto end = std::chrono::high_resolution_clock::now();
+	for (auto& thread : threads)
+		thread.join();
+	auto end = std::chrono::high_resolution_clock::now();
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
-	std::cout << "Naive " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (this->tp.getThreadsNum() == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
-	const auto textFile = this->algType == AlgorithmType::MIN ? (this->tp.getThreadsNum() == 1 ? minSingleTextFile : minMultiTextFile) : (this->tp.getThreadsNum() == 1 ? maxSingleTextFile : maxMultiTextFile);
+	std::cout << "Naive " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
+	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
 	std::ofstream outfile;
 	outfile.open(textFile, std::ios_base::app);
 	if (outfile.is_open())
 		outfile << execTime << "\n";
 	else
 		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
-	this->tp.stop();
 	for (auto i = 0; i < threadsNum; ++i) {
 		auto firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		auto lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;

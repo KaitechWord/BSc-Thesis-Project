@@ -18,16 +18,16 @@ void NaiveSignalFilter::apply(Signal& signal) {
     int remainder = size % threadsNum;
     std::vector<std::shared_ptr<Signal>> partsOfSignal;
 
-    this->tp.start();
+    std::vector<std::thread> threads;
     for (int i = 0; i < threadsNum; i++) {
         int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
         int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
         partsOfSignal.emplace_back(std::make_shared<Signal>());
         std::shared_ptr<Signal> partOfSignal = partsOfSignal.back();
-        this->tp.queueJob([this, partOfSignal, firstIndex, lastIndex]() { this->filter(partOfSignal, firstIndex, lastIndex); });
+        threads.emplace_back(std::thread(&NaiveSignalFilter::filter, this, partOfSignal, firstIndex, lastIndex));
     }
-    while (this->tp.busy()) {};
-    this->tp.stop();
+    for (auto& thread : threads)
+        thread.join();
     for (int i = 0; i < threadsNum; i++) {
         int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
         int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;

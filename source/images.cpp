@@ -35,7 +35,6 @@ int main(int argc, char* argv[]) {
 	std::unique_ptr<ImageFilter> imageFilter = imageInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< ImageFilter >(std::make_unique<NaiveImageFilter>(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize))
 		: std::unique_ptr< ImageFilter >(std::make_unique<SmartImageFilter>(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize));
 	imageFilter->apply(image);
-	//save only when used with config file
 	if (argc == 1)
 		fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/output/imageResult.png");
 

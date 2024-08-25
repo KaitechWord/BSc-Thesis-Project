@@ -2,6 +2,6 @@
 #include <iostream>
 #include <string>
 
-ImageFilter::ImageFilter(int threadNum, AlgorithmType algType, int maskSize)
-    : Filter(threadNum, algType), maskSize(maskSize)
+ImageFilter::ImageFilter(int threadsNum, AlgorithmType algType, int maskSize)
+    : Filter(threadsNum, algType), maskSize(maskSize)
 {}

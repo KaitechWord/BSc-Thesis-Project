@@ -3,8 +3,8 @@
 #include <opencv2/core.hpp>
 
 template<typename T>
-Filter<T>::Filter(int threadNum, AlgorithmType algType)
-    : algType(algType), tp(threadNum)
+Filter<T>::Filter(int threadsNum, AlgorithmType algType)
+    : algType(algType), threadNum(threadsNum)
 {
     switch(this->algType){
         case AlgorithmType::MIN:

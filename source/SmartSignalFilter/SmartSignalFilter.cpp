@@ -29,9 +29,9 @@ void SmartSignalFilter::apply(Signal& signal) {
 	int sizeOfOneThread = size / threadsNum;
 	int remainder = size % threadsNum;
 	std::vector<std::shared_ptr<Signal>> partsOfSignal;
-	this->tp.start();
 	std::map<int, std::map<int, int>> prePostFixes;
 	std::mutex prePostFixesL;
+	std::vector<std::thread> threads;
 	for (int i = 0; i < threadsNum; i++) {
 		PartOfSignal partOfSignalType = PartOfSignal::MID;
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
@@ -49,10 +49,11 @@ void SmartSignalFilter::apply(Signal& signal) {
 		}
 		else { //MID
 		}
-		this->tp.queueJob([this, partOfSignal, firstIndex, lastIndex, partOfSignalType]() { this->filter(partOfSignal, firstIndex, lastIndex, partOfSignalType); });
+		threads.emplace_back(std::thread(&SmartSignalFilter::filter, this, partOfSignal, firstIndex, lastIndex, partOfSignalType));
 	}
-	while (this->tp.busy()) {};
-	this->tp.stop();
+	for (auto& thread : threads)
+		thread.join();
+
 	int i = 0;
 	for (auto& partOfSignal : partsOfSignal) {
 		for (int value : partOfSignal->getSignal()) {
