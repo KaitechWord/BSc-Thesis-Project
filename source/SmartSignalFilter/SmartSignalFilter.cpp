@@ -1,15 +1,17 @@
 #include "SmartSignalFilter.h"
 #include <iostream>
 #include <chrono>
+#include <algorithm>
+#include <thread>
 
 SmartSignalFilter::SmartSignalFilter(int threadNum, AlgorithmType algType, int maskSize)
 	: SignalFilter(threadNum, algType, maskSize)
 {}
 
-void SmartSignalFilter::apply(Signal& signal) {
+void SmartSignalFilter::apply(std::vector<int>& signal) {
 	this->data = signal;
-	int size = signal.getSignalSize();
-	int threadsNum = 1;//this->tp.getThreadsNum();
+	int size = signal.size();
+	int threadsNum = this->threadNum;
 	if (size < maskSize * 2) {
 		std::cout << "Too small signal size. It is smaller than size of two masks. Applying smart filter would not differ from using naive approach\n";
 		return;
@@ -17,52 +19,103 @@ void SmartSignalFilter::apply(Signal& signal) {
 	if (threadsNum > size) {
 		std::cout << "The number of threads is bigger than the size of the signal. Setting number of threads to size.\n";
 		threadsNum = size;
-	}                           //offset
-	/*int minNumOfThreads = size / (maskSize + 1);
-	if (size % (maskSize + 1) != 0) {
-		minNumOfThreads++;
 	}
-	if (threadsNum > minNumOfThreads) {
-		std::cout << "Minimum number of threads changed to " << minNumOfThreads << ". Due to the fact that algorith would not work properly." << std::endl;
-		threadsNum = minNumOfThreads;
-	}*/
 	int sizeOfOneThread = size / threadsNum;
 	int remainder = size % threadsNum;
-	std::vector<std::shared_ptr<Signal>> partsOfSignal;
-	std::map<int, std::map<int, int>> prePostFixes;
-	std::mutex prePostFixesL;
+	std::vector<int> newSignal(size);
 	std::vector<std::thread> threads;
 	for (int i = 0; i < threadsNum; i++) {
-		PartOfSignal partOfSignalType = PartOfSignal::MID;
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		partsOfSignal.emplace_back(std::make_shared<Signal>());
-		std::shared_ptr<Signal> partOfSignal = partsOfSignal.back();
-		if (threadsNum == 1) {
-			partOfSignalType = PartOfSignal::WHOLE;
-		}
-		else if (firstIndex == 0) {
-			partOfSignalType = PartOfSignal::START;
-		}
-		else if (lastIndex >= size - 1) {
-			partOfSignalType = PartOfSignal::END;
-		}
-		else { //MID
-		}
-		threads.emplace_back(std::thread(&SmartSignalFilter::filter, this, partOfSignal, firstIndex, lastIndex, partOfSignalType));
+		threads.emplace_back(std::thread(&SmartSignalFilter::filter, this, std::ref(newSignal), firstIndex, lastIndex));
 	}
 	for (auto& thread : threads)
 		thread.join();
 
-	int i = 0;
-	for (auto& partOfSignal : partsOfSignal) {
-		for (int value : partOfSignal->getSignal()) {
-			signal[i++] = value;
+	signal = std::move(newSignal);
+}
+
+inline int getIndex(int startIndex, int endIndex, int maskSize)
+{
+	//czy na pewno dobrze?
+	return startIndex * maskSize + endIndex;
+}
+
+void SmartSignalFilter::filter(std::vector<int>& newSignal, int firstIndex, int lastIndex) {
+	auto signalSize = static_cast<int>(this->data.size());
+	//By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
+	auto maskOneHalfLength = this->maskSize / 2;
+	//Starting value is set in base class in regards to algType
+	auto targetValue = this->startingValue;
+	//Flatten 3D array
+	std::vector<int> prefixesPostfixes(signalSize * this->maskSize);
+	auto lastRowIndex = 0;
+	// "i" is always the centre of first mask
+	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + this->maskSize + 1, lastIndex)) {
+		auto firstMaskFarLeftIndex = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
+		auto firstMaskFarRightIndex = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
+		auto presecondMaskCentreIndex = std::clamp(i + maskSize, 0, signalSize - 1);
+		auto secondMaskFarLeftIndex = std::clamp(presecondMaskCentreIndex - maskOneHalfLength, 0, signalSize - 1);
+		auto secondMaskFarRightIndex = std::clamp(presecondMaskCentreIndex + maskOneHalfLength, 0, signalSize - 1);
+
+		prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, maskSize)] = this->data[firstMaskFarRightIndex];
+		//Prefixes - first mask
+		for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
+			auto currentValue = this->data[k];
+			auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), maskSize)];
+			if (this->compare(currentValue, oldValue)) {
+				prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, maskSize)] = currentValue;
+			}
+			else {
+				prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, maskSize)] = oldValue;
+			}
 		}
+
+		prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, maskSize)] = this->data[secondMaskFarLeftIndex];
+		//Postfixes - secondmask
+		for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
+			auto currentValue = this->data[k];
+			auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, maskSize)];
+			if (this->compare(currentValue, oldValue)) {
+				prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, maskSize)] = currentValue;
+			}
+			else {
+				prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, maskSize)] = oldValue;
+			}
+		}
+
+		auto firstMaskCentreIndex = std::clamp(i, firstMaskFarLeftIndex, firstMaskFarRightIndex);
+		auto secondMaskCentreIndex = std::clamp(i + 2 * maskOneHalfLength + 1, secondMaskFarLeftIndex, secondMaskFarRightIndex);
+
+		//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
+		auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, maskSize)];
+		newSignal[firstMaskCentreIndex] = bestValue;
+		//Finding best value for indices that are mix of prefixes from first mask and postfixes from second mask
+		for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
+			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+			auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, maskSize)];
+			auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, maskSize)];
+			int bestValue;
+			if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+				bestValue = firstPartOfMaskValue;
+			}
+			else {
+				bestValue = secondPartOfMaskValue;
+			}
+			newSignal[j] = bestValue;
+		}
+		auto currentMaskLeftMost = std::clamp(secondMaskCentreIndex - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+		auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+		//Finding best value for last index from second mask (it is separate case - we need to only use postfixes from second mask)
+		newSignal[secondMaskCentreIndex] = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, maskSize)];
+
+		if (i == lastIndex)
+			break;
 	}
 }
 
-void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firstIndex, int lastIndex, PartOfSignal partOfSignalType) {
+/*void SmartSignalFilter::filter(Signal& newPartOfSignal, int firstIndex, int lastIndex) {
 	int signalSize = this->data.getSignalSize();
 	//By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
 	int maskOneHalfLength = this->maskSize / 2;
@@ -111,7 +164,7 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
 			//std::cout << newPartOfSignal->getSignal().back() << " at index: " << i << std::endl;
 		}
 		for (int startOfPrefixMask = firstIndex; startOfPrefixMask < lastIndex + 1; startOfPrefixMask += maskSize + 1) {
-			//case when the start of the prefix mask is the only left index 
+			//case when the start of the prefix mask is the only left index
 			if (startOfPrefixMask == signalSize - 1) {
 				// we break coz startOfPrefixMask is the only index left (we calculate the next index, which does not exist at this point)
 				break;
@@ -296,7 +349,7 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
 				}
 				return;
 				// it means that we can calculate the indexes(by that i mean the middle indexes of masks) up to
-				// middle of prefix(postfix really) mask and up to some index which is defined by the last index of 
+				// middle of prefix(postfix really) mask and up to some index which is defined by the last index of
 				// endOfPostfixMask (not directly, it helps define it in some way)
 				// thus, the approach to calc the indexes after the middle one of prefix(postfix really) mask needs to be implemented
 				// it can be done in a way that we use smart approach as long as we can and then switch to naive
@@ -409,7 +462,7 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
 				}
 				return;
 				// it means that we can calculate the indexes(by that i mean the middle indexes of masks) up to
-				// middle of prefix(postfix really) mask and up to some index which is defined by the last index of 
+				// middle of prefix(postfix really) mask and up to some index which is defined by the last index of
 				// endOfPostfixMask (not directly, it helps define it in some way)
 				// thus, the approach to calc the indexes after the middle one of prefix(postfix really) mask needs to be implemented
 				// it can be done in a way that we use smart approach as long as we can and then switch to naive
@@ -533,7 +586,7 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
 				}
 				return;
 				// it means that we can calculate the indexes(by that i mean the middle indexes of masks) up to
-				// middle of prefix(postfix really) mask and up to some index which is defined by the last index of 
+				// middle of prefix(postfix really) mask and up to some index which is defined by the last index of
 				// endOfPostfixMask (not directly, it helps define it in some way)
 				// thus, the approach to calc the indexes after the middle one of prefix(postfix really) mask needs to be implemented
 				// it can be done in a way that we use smart approach as long as we can and then switch to naive
@@ -597,4 +650,4 @@ void SmartSignalFilter::filter(std::shared_ptr<Signal> newPartOfSignal, int firs
 			}
 		}
 	}
-}
+}*/

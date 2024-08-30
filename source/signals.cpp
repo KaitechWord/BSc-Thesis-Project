@@ -10,18 +10,18 @@
 #include "./NaiveSignalFilter/NaiveSignalFilter.h"
 #include "./SmartSignalFilter/SmartSignalFilter.h"
 
-Config &config = Config::instance("../data/config.json");
+Config &config = Config::instance(std::string(ROOT_DIR) + "/data/config.json");
 
 int main(int argc, char *argv[]){
     FilterInfo signalInfo, imageInfo;
     config.getInfo(signalInfo, InfoToRead::SIGNAL);
     FileManager fileManager;
     fileManager.loadSignalFromFile(signalInfo.dataPath);
-    Signal signal;
+    std::vector<int> signal;
     fileManager.getLoadedSignal(signal);
-    //SmartSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
-    NaiveSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
+    SmartSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
+    //NaiveSignalFilter SSF(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize);
     SSF.apply(signal);
-    fileManager.saveSignalToFile(signal, "./yikes.txt");
+    fileManager.saveSignalToFile(signal, std::string(ROOT_DIR) + "/output/signalResult.txt");
     return 0;
 }
