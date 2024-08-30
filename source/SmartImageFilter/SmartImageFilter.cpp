@@ -92,29 +92,29 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		auto farBotIndex = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
 
 		for (auto j = farTopIndex; j <= farBotIndex; ++j) {
-			prefixesPostfixes.at(getIndex(firstMaskFarRightIndex, 0, j % maskSize, cols, maskSize)) = this->data.at<uchar>(j, firstMaskFarRightIndex);
+			prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, j % maskSize, cols, maskSize)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
 			//Prefixes - first mask
 			for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
 				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes.at(getIndex(k + 1, firstMaskFarRightIndex - (k + 1), j % maskSize, cols, maskSize));
+				auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), j % maskSize, cols, maskSize)];
 				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = currentValue;
+					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)] = currentValue;
 				}
 				else {
-					prefixesPostfixes.at(getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)) = oldValue;
+					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)] = oldValue;
 				}
 			}
 
-			prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, 0, j % maskSize, cols, maskSize)) = this->data.at<uchar>(j, secondMaskFarLeftIndex);
+			prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, j % maskSize, cols, maskSize)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);
 			//Postfixes - secondmask
 			for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
 				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, j % maskSize, cols, maskSize));
+				auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)];
 				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = currentValue;
+					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)] = currentValue;
 				}
 				else {
-					prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)) = oldValue;
+					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)] = oldValue;
 				}
 			}
 		}
@@ -124,9 +124,9 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 
 		//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
 		//Iterating from top row of mask up to bottom row of mask
-		auto bestValue = prefixesPostfixes.at(getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize));
+		auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize)];
 		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-			auto currentValue = prefixesPostfixes.at(getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, k % maskSize, cols, maskSize));
+			auto currentValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, k % maskSize, cols, maskSize)];
 			if (this->compare(currentValue, bestValue)) {
 				bestValue = currentValue;
 			}
@@ -136,8 +136,8 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
 			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
 			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-			auto firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize));
-			auto secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize));
+			auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize)];
+			auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize)];
 			int bestValue;
 			if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 				bestValue = firstPartOfMaskValue;
@@ -147,8 +147,8 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 			}
 			//Iterating from top row of mask up to bottom row of mask
 			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-				firstPartOfMaskValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, k % maskSize, cols, maskSize));
-				secondPartOfMaskValue = prefixesPostfixes.at(getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, k % maskSize, cols, maskSize));
+				firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, k % maskSize, cols, maskSize)];
+				secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, k % maskSize, cols, maskSize)];
 				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 					if (this->compare(firstPartOfMaskValue, bestValue)) {
 						bestValue = firstPartOfMaskValue;
@@ -166,9 +166,9 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
 		//Finding best value for last index from second mask (it is separate case - we need to only use postfixes from second mask)
 		//Iterating from top row of mask up to bottom row of mask
-		bestValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize));
+		bestValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize)];
 		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-			auto currentValue = prefixesPostfixes.at(getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, k % maskSize, cols, maskSize));
+			auto currentValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, k % maskSize, cols, maskSize)];
 			if (this->compare(currentValue, bestValue)) {
 				bestValue = currentValue;
 			}
