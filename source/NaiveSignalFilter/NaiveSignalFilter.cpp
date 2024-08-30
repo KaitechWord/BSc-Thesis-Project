@@ -2,6 +2,12 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <fstream>
+
+static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinSingle.txt";
+static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinMulti.txt";
+static const auto maxSingleTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMaxSingle.txt";
+static const auto maxMultiTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMaxMulti.txt";
 
 NaiveSignalFilter::NaiveSignalFilter(int threadNum, AlgorithmType algType, int maskSize)
 	: SignalFilter(threadNum, algType, maskSize)
@@ -18,8 +24,8 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 	int sizeOfOneThread = size / threadsNum;
 	int remainder = size % threadsNum;
 	std::vector<int> newSignal(size);
-
 	std::vector<std::thread> threads;
+	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < threadsNum; i++) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
@@ -27,30 +33,33 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 	}
 	for (auto& thread : threads)
 		thread.join();
+	auto end = std::chrono::high_resolution_clock::now();
+	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
+	std::cout << "Naive " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " signal " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
+	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
+	std::ofstream outfile;
+	outfile.open(textFile, std::ios_base::app);
+	if (outfile.is_open())
+		outfile << execTime << "\n";
+	else
+		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
 	signal = std::move(newSignal);
+	outfile.close();
 }
 
 void NaiveSignalFilter::filter(std::vector<int>& newSignal, int firstIndex, int lastIndex) {
 	int signalSize = this->data.size();
 	//By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
 	int maskOneHalfLength = this->maskSize / 2;
-	//Setting the initial value of index of MIN/MAX value that we are looking for to one behind the start of mask
-	int indexOfTargetValue = firstIndex - maskOneHalfLength;
+	//Setting the initial value of index of MIN/MAX value that we are looking for to one 	behind the start of mask
+	int indexOfTargetValue = std::clamp(firstIndex - maskOneHalfLength, 0, signalSize - 1);
 	//Starting value is set in base class in regards to algType
 	int targetValue = this->startingValue;
-	for (int i = firstIndex; i <= lastIndex; i++) {
-		int leftMostIndexOfMask = i - maskOneHalfLength;
-		//Protects us against going out of bounds from left side
-		if (leftMostIndexOfMask < 0) {
-			leftMostIndexOfMask = 0;
-		}
-		//Protects us against going out of bounds from right side
-		int rightMostIndexOfMask = i + maskOneHalfLength;
-		if (rightMostIndexOfMask >= signalSize) {
-			rightMostIndexOfMask = signalSize - 1;
-		}
+	for (int i = firstIndex; i <= lastIndex; ++i) {
+		int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
+		int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
 		//If index is outside of our window mask, we need to iterate through every number to find the MIN/MAX
-		if (indexOfTargetValue < leftMostIndexOfMask || i == firstIndex) {
+		if (indexOfTargetValue < leftMostIndexOfMask) {
 			targetValue = this->startingValue;
 			for (int j = leftMostIndexOfMask; j <= rightMostIndexOfMask; j++) {
 				if (this->compare(this->data[j], targetValue)) {

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <fstream>
+#include <thread>
 
 static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SmartMinSingle.txt";
 static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SmartMinMulti.txt";
@@ -54,6 +55,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 			image.at<uchar>(j / colSize, j % colSize) = newImage.at<uchar>(j / colSize, j % colSize);
 		}
 	}
+	outfile.close();
 }
 
 inline int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSize, int maskSize)

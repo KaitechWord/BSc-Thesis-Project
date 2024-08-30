@@ -3,6 +3,12 @@
 #include <chrono>
 #include <algorithm>
 #include <thread>
+#include <fstream>
+
+static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SignalSmartMinSingle.txt";
+static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SignalSmartMinMulti.txt";
+static const auto maxSingleTextFile = std::string(ROOT_DIR) + "/output/SignalSmartMaxSingle.txt";
+static const auto maxMultiTextFile = std::string(ROOT_DIR) + "/output/SignalSmartMaxMulti.txt";
 
 SmartSignalFilter::SmartSignalFilter(int threadNum, AlgorithmType algType, int maskSize)
 	: SignalFilter(threadNum, algType, maskSize)
@@ -24,6 +30,7 @@ void SmartSignalFilter::apply(std::vector<int>& signal) {
 	int remainder = size % threadsNum;
 	std::vector<int> newSignal(size);
 	std::vector<std::thread> threads;
+	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < threadsNum; i++) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
@@ -31,8 +38,18 @@ void SmartSignalFilter::apply(std::vector<int>& signal) {
 	}
 	for (auto& thread : threads)
 		thread.join();
-
+	auto end = std::chrono::high_resolution_clock::now();
+	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
+	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " signal " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
+	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
+	std::ofstream outfile;
+	outfile.open(textFile, std::ios_base::app);
+	if (outfile.is_open())
+		outfile << execTime << "\n";
+	else
+		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
 	signal = std::move(newSignal);
+	outfile.close();
 }
 
 inline int getIndex(int startIndex, int endIndex, int maskSize)

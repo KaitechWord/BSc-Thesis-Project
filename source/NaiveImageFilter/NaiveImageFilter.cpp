@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <fstream>
+#include <thread>
 
 static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/NaiveMinSingle.txt";
 static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/NaiveMinMulti.txt";
@@ -24,7 +25,6 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 	}
 	auto sizeOfOneThread = pixelsNum / threadsNum;
 	auto remainder = pixelsNum % threadsNum;
-
 	std::vector<std::thread> threads;
 	cv::Mat newImage(rows, cols, image.type());
 	auto start = std::chrono::high_resolution_clock::now();
@@ -57,6 +57,7 @@ void NaiveImageFilter::apply(cv::Mat& image) {
 			image.at<uchar>(rowIndex, colIndex) = newImage.at<uchar>(rowIndex, colIndex);
 		}
 	}
+	outfile.close();	
 }
 
 void NaiveImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) {
