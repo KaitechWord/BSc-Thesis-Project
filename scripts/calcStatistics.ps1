@@ -2,7 +2,7 @@ $exePath = "./bin/Image.exe"
 $deletePreviousRecordsPath = "./output/*.txt"
 
 if ($args.Count -lt 4) {
-    Write-Host "Usage: ./runFilterMultipleTimes.ps1 <number_of_repetitions> <number_of_threads> <mask_size> <file_path>"
+    Write-Host "Usage: ./calcStatistics.ps1 <number_of_repetitions> <number_of_threads> <mask_size> <file_path>"
     exit 1
 }
 

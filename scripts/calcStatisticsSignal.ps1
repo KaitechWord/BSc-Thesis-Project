@@ -2,7 +2,7 @@ $exePath = "./bin/Signal.exe"
 $deletePreviousRecordsPath = "./output/Signal*.txt"
 
 if ($args.Count -lt 4) {
-    Write-Host "Usage: $0 <number_of_repetitions> <number_of_threads> <mask_size> <file_path>"
+    Write-Host "Usage: ./calcStatisticsSignal.ps1 <number_of_repetitions> <number_of_threads> <mask_size> <file_path>"
     exit 1
 }
 

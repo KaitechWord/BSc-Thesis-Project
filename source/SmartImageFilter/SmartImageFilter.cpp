@@ -60,6 +60,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 
 inline int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSize, int maskSize)
 {
+	//maskSize * maskSize wyeliminowac - jedna zmienna
 	return startColIndex * maskSize * maskSize + endColIndex * maskSize + rowIndex;
 }
 
@@ -76,9 +77,11 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	auto lastRowIndex = 0;
 	// "i" is always the centre of first mask
 	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + maskSize + 1, lastIndex)) {
+		//sprytniejsze obliczenie rowIndex i colIndex (dzielenie i modulo jest kozstowne)
 		auto rowIndex = i / cols;
 		auto colIndex = i % cols;
 
+		//pomyslec nad tym aby w i = std::min(i + maskSize + 1, lastIndex) bylo prawidlowo obliczane
 		if (lastRowIndex < rowIndex) {
 			lastRowIndex = rowIndex;
 			i = cols * rowIndex;
@@ -94,6 +97,7 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		auto farBotIndex = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
 
 		for (auto j = farTopIndex; j <= farBotIndex; ++j) {
+			//pozbyc sie modulo na rzecz ifa (++ z poprzedniej wartosci j)
 			prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, j % maskSize, cols, maskSize)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
 			//Prefixes - first mask
 			for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
@@ -151,6 +155,7 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
 				firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, k % maskSize, cols, maskSize)];
 				secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, k % maskSize, cols, maskSize)];
+				//na sztywno std::min / std::max jedno z tych - sprobowac
 				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 					if (this->compare(firstPartOfMaskValue, bestValue)) {
 						bestValue = firstPartOfMaskValue;

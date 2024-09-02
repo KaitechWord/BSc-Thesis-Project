@@ -5,7 +5,6 @@
 #include "SmartImageFilter/SmartImageFilter.h"
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/benchmark/catch_benchmark.hpp>
 
 Config& config = Config::instance(std::string(ROOT_DIR) + "/data/config.json");
 

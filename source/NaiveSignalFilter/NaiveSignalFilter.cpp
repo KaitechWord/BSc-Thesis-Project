@@ -1,8 +1,9 @@
 #include "NaiveSignalFilter.h"
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 #include <thread>
-#include <fstream>
+#include <fstream>  
 
 static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinSingle.txt";
 static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinMulti.txt";
@@ -23,13 +24,13 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 	}
 	int sizeOfOneThread = size / threadsNum;
 	int remainder = size % threadsNum;
-	std::vector<int> newSignal(size);
+	std::vector<std::vector<int>> newSignals(threadsNum, std::vector<int>(size));
 	std::vector<std::thread> threads;
 	auto start = std::chrono::high_resolution_clock::now();
-	for (int i = 0; i < threadsNum; i++) {
+	for (int i = 0; i < threadsNum; ++i) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		threads.emplace_back(std::thread(&NaiveSignalFilter::filter, this, std::ref(newSignal), firstIndex, lastIndex));
+		threads.emplace_back(std::thread(&NaiveSignalFilter::filter, this, std::ref(newSignals[i]), firstIndex, lastIndex));
 	}
 	for (auto& thread : threads)
 		thread.join();
@@ -43,7 +44,13 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 		outfile << execTime << "\n";
 	else
 		std::cerr << "File: " << textFile << " did not open successfully." << "\n";
-	signal = std::move(newSignal);
+	for (int i = 0; i < threadsNum; ++i) {
+		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
+		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
+		for (int j = firstIndex; j <= lastIndex; ++j) {
+			signal[j] = newSignals[i][j];
+		}
+	}
 	outfile.close();
 }
 
@@ -59,7 +66,7 @@ void NaiveSignalFilter::filter(std::vector<int>& newSignal, int firstIndex, int 
 		int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
 		int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
 		//If index is outside of our window mask, we need to iterate through every number to find the MIN/MAX
-		if (indexOfTargetValue < leftMostIndexOfMask) {
+		if (indexOfTargetValue < leftMostIndexOfMask || i == firstIndex) {
 			targetValue = this->startingValue;
 			for (int j = leftMostIndexOfMask; j <= rightMostIndexOfMask; j++) {
 				if (this->compare(this->data[j], targetValue)) {
@@ -76,6 +83,6 @@ void NaiveSignalFilter::filter(std::vector<int>& newSignal, int firstIndex, int 
 				indexOfTargetValue = rightMostIndexOfMask;
 			}
 		}
-		newSignal.push_back(targetValue);
+		newSignal[i] = targetValue;
 	}
 }
