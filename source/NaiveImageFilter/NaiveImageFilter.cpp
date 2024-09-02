@@ -100,8 +100,11 @@ void NaiveImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	newImage.at<uchar>(rowIndex, colIndex) = static_cast<uchar>(targetValue);
 
 	for (auto i = firstIndex + 1; i <= lastIndex; ++i) {
-		auto rowIndex = i / colSize;
-		auto colIndex = i % colSize;
+		++colIndex;
+		if (colIndex == colSize) {
+			colIndex = 0;
+			++rowIndex;
+		}
 
 		auto leftMostIndexOfMask = std::max(0, colIndex - maskOneHalfLength);
 		auto rightMostIndexOfMask = std::min(colIndex + maskOneHalfLength, colSize - 1);

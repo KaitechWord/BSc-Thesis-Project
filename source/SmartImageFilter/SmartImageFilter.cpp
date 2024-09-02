@@ -75,17 +75,16 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	//Flatten 3D array
 	std::vector<uchar> prefixesPostfixes(cols * maskSize * maskSize);
 	auto lastRowIndex = 0;
+	auto rowIndex = firstIndex / cols;
+	auto colIndex = firstIndex % cols;
+	int nextIndex;
 	// "i" is always the centre of first mask
-	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + maskSize + 1, lastIndex)) {
-		//sprytniejsze obliczenie rowIndex i colIndex (dzielenie i modulo jest kozstowne)
-		auto rowIndex = i / cols;
-		auto colIndex = i % cols;
-
+	for (auto i = firstIndex; i <= lastIndex; i = nextIndex) {
 		//pomyslec nad tym aby w i = std::min(i + maskSize + 1, lastIndex) bylo prawidlowo obliczane
-		if (lastRowIndex < rowIndex) {
-			lastRowIndex = rowIndex;
-			i = cols * rowIndex;
+		if (colIndex == cols) {
 			colIndex = 0;
+			++rowIndex;
+			i = cols * rowIndex;
 		}
 
 		auto firstMaskFarLeftIndex = std::clamp(colIndex - maskOneHalfLength, 0, cols - 1);
@@ -184,5 +183,7 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 
 		if (i == lastIndex)
 			break;
+		nextIndex = std::min(i + maskSize + 1, lastIndex);
+		colIndex = colIndex + nextIndex;
 	}
 }
