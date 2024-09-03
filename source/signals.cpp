@@ -9,6 +9,7 @@
 #include "./Signal/Signal.h"
 #include "./NaiveSignalFilter/NaiveSignalFilter.h"
 #include "./SmartSignalFilter/SmartSignalFilter.h"
+#include <random>
 
 Config &config = Config::instance(std::string(ROOT_DIR) + "/data/config.json");
 
@@ -32,7 +33,15 @@ int main(int argc, char *argv[]){
     fileManager.loadSignalFromFile(signalInfo.dataPath);
     std::vector<uint8_t> signal;
     fileManager.getLoadedSignal(signal);
-    std::unique_ptr<SignalFilter> signalFilter = signalInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< SignalFilter >(std::make_unique<NaiveSignalFilter>(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize))
+	// RANDOMNESS - doesnt use values from txt files
+	std::random_device rd;  // Seed generator
+	std::mt19937 gen(rd()); // Mersenne Twister engine
+	std::uniform_int_distribution<int> dist(0, 255);
+	signal.clear();
+	for (auto i = 0; i < 2'000'000; ++i)
+		signal.push_back(static_cast<uint8_t>(dist(gen)));
+	//
+	std::unique_ptr<SignalFilter> signalFilter = signalInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< SignalFilter >(std::make_unique<NaiveSignalFilter>(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize))
 		: std::unique_ptr< SignalFilter >(std::make_unique<SmartSignalFilter>(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize));
 	signalFilter->apply(signal);
     fileManager.saveSignalToFile(signal, std::string(ROOT_DIR) + "/output/signalResult.txt");

@@ -3,12 +3,13 @@
 #include "Config/FilterInfo.h"
 #include "NaiveSignalFilter/NaiveSignalFilter.h"
 #include "SmartSignalFilter/SmartSignalFilter.h"
+#include <random>
 
 #include <catch2/catch_test_macros.hpp>
 
 Config& config = Config::instance(std::string(ROOT_DIR) + "/data/config.json");
 
-void copySignalToMat(std::vector<int>& signal, cv::Mat& signalMat) {
+void copySignalToMat(std::vector<uint8_t>& signal, cv::Mat& signalMat) {
 	for (int i = 0; i < signal.size(); ++i) {
 		signalMat.at<uchar>(0, i) = signal[i];
 	}
@@ -27,11 +28,19 @@ TEST_CASE("NaiveSignalFilter") {
 	config.getInfo(signalInfo, InfoToRead::SIGNAL);
 	FileManager fileManager;
 	fileManager.loadSignalFromFile(signalInfo.dataPath);
-	std::vector<int> signal;
+	std::vector<uint8_t> signal;
 	fileManager.getLoadedSignal(signal);
+	// RANDOMNESS - doesnt use values from txt files
+	std::random_device rd;  // Seed generator
+	std::mt19937 gen(rd()); // Mersenne Twister engine
+	std::uniform_int_distribution<int> dist(0, 255);
+	signal.clear();
+	for (auto i = 0; i < 2'000'000; ++i)
+		signal.push_back(static_cast<uint8_t>(dist(gen)));
+	//
 	cv::Mat signalTestMat(1, signal.size(), CV_8UC1);
 	copySignalToMat(signal, signalTestMat);
-
+	
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(signalInfo.maskSize, 1));
 
 	SECTION("MIN") {
@@ -45,8 +54,8 @@ TEST_CASE("NaiveSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 
@@ -59,8 +68,8 @@ TEST_CASE("NaiveSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 	}
@@ -75,8 +84,8 @@ TEST_CASE("NaiveSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 		SECTION("Multiple threads") {
@@ -88,8 +97,8 @@ TEST_CASE("NaiveSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 	}
@@ -100,7 +109,7 @@ TEST_CASE("SmartSignalFilter") {
 	config.getInfo(signalInfo, InfoToRead::SIGNAL);
 	FileManager fileManager;
 	fileManager.loadSignalFromFile(signalInfo.dataPath);
-	std::vector<int> signal;
+	std::vector<uint8_t> signal;
 	fileManager.getLoadedSignal(signal);
 	cv::Mat signalTestMat(1, signal.size(), CV_8UC1);
 	copySignalToMat(signal, signalTestMat);
@@ -118,8 +127,8 @@ TEST_CASE("SmartSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 
@@ -132,8 +141,8 @@ TEST_CASE("SmartSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 	}
@@ -148,8 +157,8 @@ TEST_CASE("SmartSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 		SECTION("Multiple threads") {
@@ -161,8 +170,8 @@ TEST_CASE("SmartSignalFilter") {
 			cv::Mat check;
 			cv::bitwise_xor(signalMat, signalTestMat, check);
 			const auto signalsAreEqual = cv::countNonZero(check) == 0;
-			if (!signalsAreEqual)
-				printDifferences(signalMat, signalTestMat);
+			/*if (!signalsAreEqual)
+				printDifferences(signalMat, signalTestMat);*/
 			REQUIRE((signalsAreTheSameSize && signalsAreEqual));
 		}
 	}

@@ -27,16 +27,8 @@ void NaiveSignalFilter::apply(std::vector<uint8_t>& signal) {
 	int remainder = size % threadsNum;
 	std::vector<std::vector<uint8_t>> newSignals(threadsNum, std::vector<uint8_t>(size));
 	std::vector<std::thread> threads;
-	// RANDOMNESS - doesnt use values from txt files
-	std::random_device rd;  // Seed generator
-	std::mt19937 gen(rd()); // Mersenne Twister engine
-	std::uniform_int_distribution<int> dist(0, 255);
-	this->data.clear();
-	for (auto i = 0; i < 2'000'000; ++i)
-		this->data.push_back(static_cast<uint8_t>(dist(gen)));
 	std::cout << "Number of elements: " << this->data.size() << std::endl;
 	std::cout << "MaskSize: " << this->maskSize << std::endl;
-	//
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < threadsNum; ++i) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
