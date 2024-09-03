@@ -89,108 +89,221 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 			i = cols * rowIndex;
 		}
 
-		auto firstMaskFarLeftIndex = std::clamp(colIndex - maskOneHalfLength, 0, cols - 1);
-		auto firstMaskFarRightIndex = std::clamp(colIndex + maskOneHalfLength, 0, cols - 1);
-		auto presecondMaskCentreIndex = std::clamp(colIndex + maskSize, 0, cols - 1);
-		auto secondMaskFarLeftIndex = std::clamp(presecondMaskCentreIndex - maskOneHalfLength, 0, cols - 1);
-		auto secondMaskFarRightIndex = std::clamp(presecondMaskCentreIndex + maskOneHalfLength, 0, cols - 1);
-		auto farTopIndex = std::clamp(rowIndex - maskOneHalfLength, 0, rows - 1);
-		auto farBotIndex = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
+		auto farTopIndex = rowIndex - maskOneHalfLength;
+		auto farBotIndex = rowIndex + maskOneHalfLength;
+		auto farLeftIndex = colIndex + maskOneHalfLength;
+		auto farRightIndex = colIndex + maskSize + maskOneHalfLength;
 
-		auto relativePrefixSuffixRowIndex = 0;
-		for (auto j = farTopIndex; j <= farBotIndex; ++j) {
-			//pozbyc sie modulo na rzecz ifa (++ z poprzedniej wartosci j)
-			prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
-			//Prefixes - first mask
-			for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
-				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = currentValue;
+		auto isFarTopIndexOutsideTheBorder = farTopIndex < 0;
+		auto isFarBotIndexOutsideTheBorder = farBotIndex >= rows;
+		auto isFarLeftIndexOutsideTheBorder = farLeftIndex < 0;;
+		auto isFarRightIndexOutsideTheBorder = farRightIndex >= cols;
+		auto isOutsideTheBorder = isFarTopIndexOutsideTheBorder || isFarBotIndexOutsideTheBorder ||
+			isFarLeftIndexOutsideTheBorder || isFarRightIndexOutsideTheBorder;
+		if (isOutsideTheBorder) {
+			auto firstMaskFarLeftIndex = std::clamp(farLeftIndex, 0, cols - 1);
+			auto firstMaskFarRightIndex = std::clamp(colIndex + maskOneHalfLength, 0, cols - 1);
+			auto presecondMaskCentreIndex = std::clamp(colIndex + maskSize, 0, cols - 1);
+			auto secondMaskFarLeftIndex = std::clamp(presecondMaskCentreIndex - maskOneHalfLength, 0, cols - 1);
+			auto secondMaskFarRightIndex = std::clamp(farRightIndex, 0, cols - 1);
+			farTopIndex = std::clamp(farTopIndex, 0, rows - 1);
+			farBotIndex = std::clamp(farBotIndex, 0, rows - 1);
+
+			auto relativePrefixSuffixRowIndex = 0;
+			for (auto j = farTopIndex; j <= farBotIndex; ++j) {
+				prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
+				//Prefixes - first mask
+				for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
+					auto currentValue = this->data.at<uchar>(j, k);
+					auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					if (this->compare(currentValue, oldValue)) {
+						prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = currentValue;
+					}
+					else {
+						prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = oldValue;
+					}
 				}
-				else {
-					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = oldValue;
+
+				prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);
+				//Postfixes - secondmask
+				for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
+					auto currentValue = this->data.at<uchar>(j, k);
+					auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					if (this->compare(currentValue, oldValue)) {
+						prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = currentValue;
+					}
+					else {
+						prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = oldValue;
+					}
 				}
+				++relativePrefixSuffixRowIndex;
 			}
 
-			prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);
-			//Postfixes - secondmask
-			for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
-				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = currentValue;
-				}
-				else {
-					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = oldValue;
-				}
-			}
-			++relativePrefixSuffixRowIndex;
-		}
+			auto firstMaskCentreIndex = std::clamp(colIndex, firstMaskFarLeftIndex, firstMaskFarRightIndex);
+			auto secondMaskCentreIndex = std::clamp(colIndex + 2 * maskOneHalfLength + 1, secondMaskFarLeftIndex, secondMaskFarRightIndex);
 
-		auto firstMaskCentreIndex = std::clamp(colIndex, firstMaskFarLeftIndex, firstMaskFarRightIndex);
-		auto secondMaskCentreIndex = std::clamp(colIndex + 2 * maskOneHalfLength + 1, secondMaskFarLeftIndex, secondMaskFarRightIndex);
-
-		//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
-		//Iterating from top row of mask up to bottom row of mask
-		auto relativeFirstMaskPrefixSuffixRowIndex = 0;
-		auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, relativeFirstMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-			++relativeFirstMaskPrefixSuffixRowIndex;
-			auto currentValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, relativeFirstMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-			if (this->compare(currentValue, bestValue)) {
-				bestValue = currentValue;
-			}
-		}
-		newImage.at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
-		//Finding best value for indices that are mix of prefixes from first mask and postfixes from second mask
-		for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
-			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-			auto relativeInterMasksPrefixSuffixRowIndex = 0;
-			auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-			auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-			int bestValue;
-			if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
-				bestValue = firstPartOfMaskValue;
-			}
-			else {
-				bestValue = secondPartOfMaskValue;
-			}
+			//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
 			//Iterating from top row of mask up to bottom row of mask
+			auto relativeFirstMaskPrefixSuffixRowIndex = 0;
+			auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, relativeFirstMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
 			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-				++relativeInterMasksPrefixSuffixRowIndex;
-				firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-				secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-				//na sztywno std::min / std::max jedno z tych - sprobowac
+				++relativeFirstMaskPrefixSuffixRowIndex;
+				auto currentValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, relativeFirstMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				if (this->compare(currentValue, bestValue)) {
+					bestValue = currentValue;
+				}
+			}
+			newImage.at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
+			//Finding best value for indices that are mix of prefixes from first mask and postfixes from second mask
+			for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
+				auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+				auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+				auto relativeInterMasksPrefixSuffixRowIndex = 0;
+				auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				int bestValue;
 				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
-					if (this->compare(firstPartOfMaskValue, bestValue)) {
-						bestValue = firstPartOfMaskValue;
-					}
+					bestValue = firstPartOfMaskValue;
 				}
 				else {
-					if (this->compare(secondPartOfMaskValue, bestValue)) {
-						bestValue = secondPartOfMaskValue;
+					bestValue = secondPartOfMaskValue;
+				}
+				//Iterating from top row of mask up to bottom row of mask
+				for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+					++relativeInterMasksPrefixSuffixRowIndex;
+					firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					//na sztywno std::min / std::max jedno z tych - sprobowac
+					if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+						if (this->compare(firstPartOfMaskValue, bestValue)) {
+							bestValue = firstPartOfMaskValue;
+						}
+					}
+					else {
+						if (this->compare(secondPartOfMaskValue, bestValue)) {
+							bestValue = secondPartOfMaskValue;
+						}
 					}
 				}
+				newImage.at<uchar>(rowIndex, j) = bestValue;
 			}
-			newImage.at<uchar>(rowIndex, j) = bestValue;
-		}
-		auto currentMaskLeftMost = std::clamp(secondMaskCentreIndex - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-		auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-		//Finding best value for last index from second mask (it is separate case - we need to only use postfixes from second mask)
-		//Iterating from top row of mask up to bottom row of mask
-		auto relativeSecondMaskPrefixSuffixRowIndex = 0;
-		bestValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, relativeSecondMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-			++relativeSecondMaskPrefixSuffixRowIndex;
-			auto currentValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, relativeSecondMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
-			if (this->compare(currentValue, bestValue)) {
-				bestValue = currentValue;
+			auto currentMaskLeftMost = std::clamp(secondMaskCentreIndex - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+			auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
+			//Finding best value for last index from second mask (it is separate case - we need to only use postfixes from second mask)
+			//Iterating from top row of mask up to bottom row of mask
+			auto relativeSecondMaskPrefixSuffixRowIndex = 0;
+			bestValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, relativeSecondMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+				++relativeSecondMaskPrefixSuffixRowIndex;
+				auto currentValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, relativeSecondMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				if (this->compare(currentValue, bestValue)) {
+					bestValue = currentValue;
+				}
 			}
+			newImage.at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
 		}
-		newImage.at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
+		//Case when we do not go outside the border from any side
+		else {
+			auto firstMaskFarLeftIndex = farLeftIndex;
+			auto firstMaskFarRightIndex = colIndex + maskOneHalfLength;
+			auto presecondMaskCentreIndex = colIndex + maskSize;
+			auto secondMaskFarLeftIndex = presecondMaskCentreIndex - maskOneHalfLength;
+			auto secondMaskFarRightIndex = farRightIndex;
 
+			auto relativePrefixSuffixRowIndex = 0;
+			for (auto j = farTopIndex; j <= farBotIndex; ++j) {
+				//pozbyc sie modulo na rzecz ifa (++ z poprzedniej wartosci j)
+				prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
+				//Prefixes - first mask
+				for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
+					auto currentValue = this->data.at<uchar>(j, k);
+					auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					if (this->compare(currentValue, oldValue)) {
+						prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = currentValue;
+					}
+					else {
+						prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = oldValue;
+					}
+				}
+
+				prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);
+				//Postfixes - secondmask
+				for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
+					auto currentValue = this->data.at<uchar>(j, k);
+					auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					if (this->compare(currentValue, oldValue)) {
+						prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = currentValue;
+					}
+					else {
+						prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, relativePrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)] = oldValue;
+					}
+				}
+				++relativePrefixSuffixRowIndex;
+			}
+
+			auto firstMaskCentreIndex = colIndex;
+			auto secondMaskCentreIndex = colIndex + 2 * maskOneHalfLength + 1;
+
+			//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
+			//Iterating from top row of mask up to bottom row of mask
+			auto relativeFirstMaskPrefixSuffixRowIndex = 0;
+			auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, relativeFirstMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+				++relativeFirstMaskPrefixSuffixRowIndex;
+				auto currentValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, relativeFirstMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				if (this->compare(currentValue, bestValue)) {
+					bestValue = currentValue;
+				}
+			}
+			newImage.at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
+			//Finding best value for indices that are mix of prefixes from first mask and postfixes from second mask
+			for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
+				auto currentMaskLeftMost = j - maskOneHalfLength;
+				auto currentMaskRightMost = j + maskOneHalfLength;
+				auto relativeInterMasksPrefixSuffixRowIndex = 0;
+				auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				int bestValue;
+				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+					bestValue = firstPartOfMaskValue;
+				}
+				else {
+					bestValue = secondPartOfMaskValue;
+				}
+				//Iterating from top row of mask up to bottom row of mask
+				for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+					++relativeInterMasksPrefixSuffixRowIndex;
+					firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, relativeInterMasksPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+					//na sztywno std::min / std::max jedno z tych - sprobowac
+					if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
+						if (this->compare(firstPartOfMaskValue, bestValue)) {
+							bestValue = firstPartOfMaskValue;
+						}
+					}
+					else {
+						if (this->compare(secondPartOfMaskValue, bestValue)) {
+							bestValue = secondPartOfMaskValue;
+						}
+					}
+				}
+				newImage.at<uchar>(rowIndex, j) = bestValue;
+			}
+			auto currentMaskLeftMost = secondMaskCentreIndex - maskOneHalfLength;
+			auto currentMaskRightMost = secondMaskCentreIndex + maskOneHalfLength;
+			//Finding best value for last index from second mask (it is separate case - we need to only use postfixes from second mask)
+			//Iterating from top row of mask up to bottom row of mask
+			auto relativeSecondMaskPrefixSuffixRowIndex = 0;
+			bestValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, relativeSecondMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
+				++relativeSecondMaskPrefixSuffixRowIndex;
+				auto currentValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, relativeSecondMaskPrefixSuffixRowIndex, cols, maskSize, maskSizeSquared)];
+				if (this->compare(currentValue, bestValue)) {
+					bestValue = currentValue;
+				}
+			}
+			newImage.at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
+		}
 		if (i == lastIndex)
 			break;
 		nextIndex = std::min(i + maskSize + 1, lastIndex);
