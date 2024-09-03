@@ -23,6 +23,6 @@ class Filter{
         int threadNum;
         //So the action is applied to first int, e.g. if the compare
         //is MIN, if the first int is less than second, it returns true etc.
-        std::function<bool(int, int)> compare;
-        int startingValue;
+        std::function<bool(uint8_t, uint8_t)> compare;
+        uint8_t startingValue;
 };

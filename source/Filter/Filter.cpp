@@ -8,15 +8,15 @@ Filter<T>::Filter(int threadsNum, AlgorithmType algType)
 {
 	switch (this->algType) {
 	case AlgorithmType::MIN:
-		this->compare = [](int a, int b) -> bool { return a < b; };
-		this->startingValue = INT_MAX;
+		this->compare = [](uint8_t a, uint8_t b) -> bool { return a < b; };
+		this->startingValue = UINT8_MAX;
 		break;
 	case AlgorithmType::MAX:
-		this->compare = [](int a, int b) -> bool { return a > b; };
-		this->startingValue = INT_MIN;
+		this->compare = [](uint8_t a, uint8_t b) -> bool { return a > b; };
+		this->startingValue = 0;
 		break;
 	}
 }
 
-template class Filter<std::vector<int>>;
+template class Filter<std::vector<uint8_t>>;
 template class Filter<cv::Mat>;

@@ -14,7 +14,7 @@ SmartSignalFilter::SmartSignalFilter(int threadNum, AlgorithmType algType, int m
 	: SignalFilter(threadNum, algType, maskSize)
 {}
 
-void SmartSignalFilter::apply(std::vector<int>& signal) {
+void SmartSignalFilter::apply(std::vector<uint8_t>& signal) {
 	this->data = signal;
 	int size = signal.size();
 	int threadsNum = this->threadNum;
@@ -28,8 +28,10 @@ void SmartSignalFilter::apply(std::vector<int>& signal) {
 	}
 	int sizeOfOneThread = size / threadsNum;
 	int remainder = size % threadsNum;
-	std::vector<std::vector<int>> newSignals(threadsNum, std::vector<int>(size));
+	std::vector<std::vector<uint8_t>> newSignals(threadsNum, std::vector<uint8_t>(size));
 	std::vector<std::thread> threads;
+	std::cout << "Number of elements: " << this->data.size() << std::endl;
+	std::cout << "MaskSize: " << this->maskSize << std::endl;
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < threadsNum; i++) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
@@ -41,6 +43,7 @@ void SmartSignalFilter::apply(std::vector<int>& signal) {
 	auto end = std::chrono::high_resolution_clock::now();
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
 	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " signal " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
+	std::cout << std::fixed << "Elem/sec:" << this->data.size() / (execTime * 0.001) << std::endl;
 	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
 	std::ofstream outfile;
 	outfile.open(textFile, std::ios_base::app);
@@ -63,7 +66,7 @@ inline int getIndex(int startIndex, int endIndex, int maskSize)
 	return startIndex * maskSize + endIndex;
 }
 
-void SmartSignalFilter::filter(std::vector<int>& newSignal, int firstIndex, int lastIndex) {
+void SmartSignalFilter::filter(std::vector<uint8_t>& newSignal, int firstIndex, int lastIndex) {
 	auto signalSize = static_cast<int>(this->data.size());
 	//By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
 	auto maskOneHalfLength = this->maskSize / 2;

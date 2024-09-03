@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
 	}
     FileManager fileManager;
     fileManager.loadSignalFromFile(signalInfo.dataPath);
-    std::vector<int> signal;
+    std::vector<uint8_t> signal;
     fileManager.getLoadedSignal(signal);
     std::unique_ptr<SignalFilter> signalFilter = signalInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< SignalFilter >(std::make_unique<NaiveSignalFilter>(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize))
 		: std::unique_ptr< SignalFilter >(std::make_unique<SmartSignalFilter>(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize));

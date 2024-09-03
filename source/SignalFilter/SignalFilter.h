@@ -3,7 +3,7 @@
 #include "../Signal/Signal.h"
 #include <vector>
 
-class SignalFilter : public Filter<std::vector<int>>{
+class SignalFilter : public Filter<std::vector<uint8_t>>{
     public:
         SignalFilter(int threadNum, AlgorithmType algType, int maskSize);
     protected:

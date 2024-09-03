@@ -3,7 +3,8 @@
 #include <chrono>
 #include <algorithm>
 #include <thread>
-#include <fstream>  
+#include <fstream>
+#include <random>
 
 static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinSingle.txt";
 static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinMulti.txt";
@@ -14,7 +15,7 @@ NaiveSignalFilter::NaiveSignalFilter(int threadNum, AlgorithmType algType, int m
 	: SignalFilter(threadNum, algType, maskSize)
 {}
 
-void NaiveSignalFilter::apply(std::vector<int>& signal) {
+void NaiveSignalFilter::apply(std::vector<uint8_t>& signal) {
 	this->data = signal;
 	int size = signal.size();
 	int threadsNum = this->threadNum;
@@ -24,8 +25,18 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 	}
 	int sizeOfOneThread = size / threadsNum;
 	int remainder = size % threadsNum;
-	std::vector<std::vector<int>> newSignals(threadsNum, std::vector<int>(size));
+	std::vector<std::vector<uint8_t>> newSignals(threadsNum, std::vector<uint8_t>(size));
 	std::vector<std::thread> threads;
+	// RANDOMNESS - doesnt use values from txt files
+	std::random_device rd;  // Seed generator
+	std::mt19937 gen(rd()); // Mersenne Twister engine
+	std::uniform_int_distribution<int> dist(0, 255);
+	this->data.clear();
+	for (auto i = 0; i < 2'000'000; ++i)
+		this->data.push_back(static_cast<uint8_t>(dist(gen)));
+	std::cout << "Number of elements: " << this->data.size() << std::endl;
+	std::cout << "MaskSize: " << this->maskSize << std::endl;
+	//
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < threadsNum; ++i) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
@@ -37,6 +48,7 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 	auto end = std::chrono::high_resolution_clock::now();
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
 	std::cout << "Naive " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " signal " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << execTime << "ms.\n";
+	std::cout << std::fixed << "Elem/sec:" << this->data.size() / (execTime * 0.001) << std::endl;
 	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
 	std::ofstream outfile;
 	outfile.open(textFile, std::ios_base::app);
@@ -54,14 +66,14 @@ void NaiveSignalFilter::apply(std::vector<int>& signal) {
 	outfile.close();
 }
 
-void NaiveSignalFilter::filter(std::vector<int>& newSignal, int firstIndex, int lastIndex) {
+void NaiveSignalFilter::filter(std::vector<uint8_t>& newSignal, int firstIndex, int lastIndex) {
 	int signalSize = this->data.size();
 	//By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
 	int maskOneHalfLength = this->maskSize / 2;
 	//Setting the initial value of index of MIN/MAX value that we are looking for to one 	behind the start of mask
 	int indexOfTargetValue = std::clamp(firstIndex - maskOneHalfLength, 0, signalSize - 1);
 	//Starting value is set in base class in regards to algType
-	int targetValue = this->startingValue;
+	auto targetValue = this->startingValue;
 	for (int i = firstIndex; i <= lastIndex; ++i) {
 		int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
 		int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);

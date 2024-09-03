@@ -1,10 +1,10 @@
 {
-    "ThreadsNumber": 5,
+    "ThreadsNumber": 1,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
                         "DataPath": "/data/signal.txt",
-                        "MaskSize": 5
+                        "MaskSize": 35
                     },
     "ImageFilter": {
                         "Variant": "MIN",

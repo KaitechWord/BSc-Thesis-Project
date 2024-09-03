@@ -45,7 +45,7 @@ void FileManager::loadImageFromFile(const std::string& fileName) {
 	cv::cvtColor(this->image, this->image, cv::COLOR_BGR2GRAY);
 }
 
-void FileManager::getLoadedSignal(std::vector<int>& signal) {
+void FileManager::getLoadedSignal(std::vector<uint8_t>& signal) {
 	signal = this->signal;
 }
 
@@ -53,7 +53,7 @@ void FileManager::getLoadedImage(cv::Mat& image) {
 	image = this->image;
 }
 
-void FileManager::saveSignalToFile(std::vector<int>& signal, const std::string& fileName) {
+void FileManager::saveSignalToFile(std::vector<uint8_t>& signal, const std::string& fileName) {
 	this->openFile(fileName, FileType::OUTPUT_FILE);
 	for (const auto& signalElement : signal) {
 		this->outputSignalFile << signalElement << " ";
