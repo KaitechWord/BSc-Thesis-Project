@@ -1,6 +1,5 @@
 #pragma once
 #include "../Filter/Filter.h"
-#include "../Signal/Signal.h"
 #include <vector>
 
 class SignalFilter : public Filter<std::vector<uint8_t>>{

@@ -1,5 +1,4 @@
 #include "Filter.h"
-#include "../Signal/Signal.h"
 #include <opencv2/core.hpp>
 
 template<typename T>

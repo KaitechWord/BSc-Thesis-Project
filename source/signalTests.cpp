@@ -37,7 +37,6 @@ TEST_CASE("NaiveSignalFilter") {
 	signal.clear();
 	for (auto i = 0; i < 2'000'000; ++i)
 		signal.push_back(static_cast<uint8_t>(dist(gen)));
-	//
 	cv::Mat signalTestMat(1, signal.size(), CV_8UC1);
 	copySignalToMat(signal, signalTestMat);
 	

@@ -2,6 +2,7 @@
 nlohmann_json/3.11.3
 opencv/4.9.0
 catch2/3.7.0
+numcpp/2.12.1
 
 [generators]
 CMakeDeps
