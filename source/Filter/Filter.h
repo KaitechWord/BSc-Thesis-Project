@@ -1,6 +1,7 @@
 #pragma once
 #include <climits>
 #include <functional>
+#include <cstdint>
 
 enum class AlgorithmType{
     MIN,

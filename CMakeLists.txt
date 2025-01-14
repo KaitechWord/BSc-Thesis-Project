@@ -16,13 +16,9 @@ project(Statistics
         VERSION 1.0
         LANGUAGES CXX)
 		
-project(NumCPPSignal
-        VERSION 1.0
-        LANGUAGES CXX)
-		
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS_RELEASE "-Ox")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(ROOT_DIR ${CMAKE_SOURCE_DIR})
 add_definitions(-DROOT_DIR="${ROOT_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${ROOT_DIR}/bin)
