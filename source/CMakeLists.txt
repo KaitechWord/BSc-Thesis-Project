@@ -18,16 +18,13 @@ add_executable(Signal source/signals.cpp ${file_manager_src} ${config_src} ${fil
 add_executable(Image source/images.cpp ${file_manager_src} ${config_src} ${filter_src} ${signal_src} ${image_filter_src} ${naive_image_filter_src} ${smart_image_filter_src})
 add_executable(ImageTests source/imageTests.cpp ${file_manager_src} ${config_src} ${filter_src} ${signal_src} ${image_filter_src} ${naive_image_filter_src} ${smart_image_filter_src})
 add_executable(SignalTests source/signalTests.cpp ${file_manager_src} ${config_src} ${filter_src} ${signal_src} ${signal_filter_src} ${naive_signal_filter_src} ${smart_signal_filter_src})
-add_executable(NumCPPSignal source/NumCPPSignal.cpp)
 
 target_compile_features(Signal PRIVATE cxx_std_17)
 target_compile_features(Image PRIVATE cxx_std_17)
 target_compile_features(ImageTests PRIVATE cxx_std_17)
 target_compile_features(SignalTests PRIVATE cxx_std_17)
-target_compile_features(NumCPPSignal PRIVATE cxx_std_17)
 
 target_link_libraries(Signal PRIVATE nlohmann_json::nlohmann_json ${OpenCV_LIBS})
 target_link_libraries(Image PRIVATE nlohmann_json::nlohmann_json ${OpenCV_LIBS})
 target_link_libraries(ImageTests PRIVATE nlohmann_json::nlohmann_json ${OpenCV_LIBS} Catch2::Catch2WithMain)
 target_link_libraries(SignalTests PRIVATE nlohmann_json::nlohmann_json ${OpenCV_LIBS} Catch2::Catch2WithMain)
-target_link_libraries(NumCPPSignal PRIVATE NumCpp::NumCpp)

@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dist(0, 255);
 	signal.clear();
-	for (auto i = 0; i < 10'000'000; ++i)
+	for (auto i = 0; i < 30'000'000; ++i)
 		signal.push_back(static_cast<uint8_t>(dist(gen)));
 	//
 	std::unique_ptr<SignalFilter> signalFilter = signalInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< SignalFilter >(std::make_unique<NaiveSignalFilter>(signalInfo.threadsNum, signalInfo.variant, signalInfo.maskSize))

@@ -67,58 +67,27 @@ void NaiveSignalFilter::filter(std::vector<uint8_t>& newSignal, int firstIndex, 
 	//Starting value is set in base class in regards to algType
 	auto targetValue = this->startingValue;
 	if (this->algType == AlgorithmType::MIN) {
+		if( firstIndex < maskOneHalfLength && firstIndex + maskOneHalfLength > this->data.size ) {
+			
+		}
+		else if( firstIndex < maskOneHalfLength ) {
+			for (int i = firstIndex; i <= maskOneHalfLength; ++i) {
+			int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
+			int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
+			newSignal[i] = *std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
+		}
+		}
 		for (int i = firstIndex; i <= lastIndex; ++i) {
 			int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
 			int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
-			//If index is outside of our window mask, we need to iterate through every number to find the MIN/MAX
-			//if (indexOfTargetValue < leftMostIndexOfMask || i == firstIndex) {
 			newSignal[i] = *std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
-			//indexOfTargetValue = std::distance(this->data.cbegin(), maskMinElement);
-			
-			/*for (int j = leftMostIndexOfMask; j <= rightMostIndexOfMask; j++) {
-				if (this->compare(this->data[j], targetValue)) {
-					targetValue = this->data[j];
-					indexOfTargetValue = j;
-				}
-			}*/
-			//If index is inside the mask, we need to check if the new value that entered the mask by moving it by one value
-			//is more suitable than already found MIN/MAX value
-		//}
-		/*else {
-			if (this->compare(this->data[rightMostIndexOfMask], targetValue)) {
-				targetValue = this->data[rightMostIndexOfMask];
-				indexOfTargetValue = rightMostIndexOfMask;
-			}
-		}*/
-			
 		}
 	}
 	else {
 		for (int i = firstIndex; i <= lastIndex; ++i) {
 			int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
 			int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
-			//If index is outside of our window mask, we need to iterate through every number to find the MIN/MAX
-			//if (indexOfTargetValue < leftMostIndexOfMask || i == firstIndex) {
 			newSignal[i] = *std::max_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
-			/*targetValue = this->startingValue;
-			auto maskMinElement = std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask);
-
-			for (int j = leftMostIndexOfMask; j <= rightMostIndexOfMask; j++) {
-				if (this->compare(this->data[j], targetValue)) {
-					targetValue = this->data[j];
-					indexOfTargetValue = j;
-				}
-			}*/
-			//If index is inside the mask, we need to check if the new value that entered the mask by moving it by one value
-			//is more suitable than already found MIN/MAX value
-		//}
-		/*else {
-			if (this->compare(this->data[rightMostIndexOfMask], targetValue)) {
-				targetValue = this->data[rightMostIndexOfMask];
-				indexOfTargetValue = rightMostIndexOfMask;
-			}
-		}*/
-			//newSignal[i] = targetValue;
 		}
 	}
 
