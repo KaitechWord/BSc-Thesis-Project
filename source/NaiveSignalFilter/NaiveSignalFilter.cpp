@@ -1,10 +1,10 @@
 #include "NaiveSignalFilter.h"
+#include <cmath>
 #include <iostream>
 #include <chrono>
 #include <algorithm>
 #include <thread>
 #include <fstream>
-#include <random>
 
 static const auto minSingleTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinSingle.txt";
 static const auto minMultiTextFile = std::string(ROOT_DIR) + "/output/SignalNaiveMinMulti.txt";
@@ -29,11 +29,20 @@ void NaiveSignalFilter::apply(std::vector<uint8_t>& signal) {
 	std::vector<std::thread> threads;
 	std::cout << "Number of elements: " << this->data.size() << std::endl;
 	std::cout << "MaskSize: " << this->maskSize << std::endl;
+	int maskOneHalfLength = this->maskSize / 2;
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < threadsNum; ++i) {
 		int firstIndex = i * sizeOfOneThread + std::min(i, remainder);
 		int lastIndex = (i + 1) * sizeOfOneThread + std::min(i + 1, remainder) - 1;
-		threads.emplace_back(std::thread(&NaiveSignalFilter::filter, this, std::ref(newSignals[i]), firstIndex, lastIndex));
+		SignalPart part;
+		if(firstIndex < maskOneHalfLength) {
+			part = SignalPart::Left;
+		} else if(lastIndex > size - maskOneHalfLength) {
+			part = SignalPart::Right;
+		} else {
+			part = SignalPart::Middle;
+		}
+		threads.emplace_back(std::thread(&NaiveSignalFilter::filter, this, std::ref(newSignals[i]), firstIndex, lastIndex, part));
 	}
 	for (auto& thread : threads)
 		thread.join();
@@ -58,7 +67,7 @@ void NaiveSignalFilter::apply(std::vector<uint8_t>& signal) {
 	outfile.close();
 }
 
-void NaiveSignalFilter::filter(std::vector<uint8_t>& newSignal, int firstIndex, int lastIndex) {
+void NaiveSignalFilter::filter(std::vector<uint8_t>& newSignal, int firstIndex, int lastIndex, SignalPart part) {
 	int signalSize = this->data.size();
 	//By one half I mean the half without the center point, e.g. maskSize = 5, thus the half length is 2
 	int maskOneHalfLength = this->maskSize / 2;
@@ -67,27 +76,43 @@ void NaiveSignalFilter::filter(std::vector<uint8_t>& newSignal, int firstIndex, 
 	//Starting value is set in base class in regards to algType
 	auto targetValue = this->startingValue;
 	if (this->algType == AlgorithmType::MIN) {
-		if( firstIndex < maskOneHalfLength && firstIndex + maskOneHalfLength > this->data.size ) {
-			
-		}
-		else if( firstIndex < maskOneHalfLength ) {
-			for (int i = firstIndex; i <= maskOneHalfLength; ++i) {
-			int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
-			int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
-			newSignal[i] = *std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
-		}
-		}
-		for (int i = firstIndex; i <= lastIndex; ++i) {
-			int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
-			int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
-			newSignal[i] = *std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
+		if(part == SignalPart::Left){
+			for (int i = firstIndex; i <= lastIndex; ++i) {
+				int rightMostIndexOfMask = i + maskOneHalfLength;
+				newSignal[i] = *std::min_element(this->data.cbegin(), this->data.cbegin() + rightMostIndexOfMask + 1);
+			}
+		} else if(part == SignalPart::Middle){
+			for (int i = firstIndex; i <= lastIndex; ++i) {
+				int leftMostIndexOfMask = i - maskOneHalfLength;
+				int rightMostIndexOfMask = i + maskOneHalfLength;
+				newSignal[i] = *std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
+			}
+		} else{
+			for (int i = firstIndex; i <= lastIndex; ++i) {
+				int leftMostIndexOfMask = i - maskOneHalfLength;
+				int rightMostIndexOfMask = signalSize - 1;
+				newSignal[i] = *std::min_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask);
+			}
 		}
 	}
 	else {
-		for (int i = firstIndex; i <= lastIndex; ++i) {
-			int leftMostIndexOfMask = std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
-			int rightMostIndexOfMask = std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
-			newSignal[i] = *std::max_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
+		if(part == SignalPart::Left){
+			for (int i = firstIndex; i <= lastIndex; ++i) {
+				int rightMostIndexOfMask = i + maskOneHalfLength;
+				newSignal[i] = *std::max_element(this->data.cbegin(), this->data.cbegin() + rightMostIndexOfMask + 1);
+			}
+		} else if(part == SignalPart::Middle){
+			for (int i = firstIndex; i <= lastIndex; ++i) {
+				int leftMostIndexOfMask = i - maskOneHalfLength;
+				int rightMostIndexOfMask = i + maskOneHalfLength;
+				newSignal[i] = *std::max_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask + 1);
+			}
+		} else{
+			for (int i = firstIndex; i <= lastIndex; ++i) {
+				int leftMostIndexOfMask = i - maskOneHalfLength;
+				int rightMostIndexOfMask = signalSize - 1;
+				newSignal[i] = *std::max_element(this->data.cbegin() + leftMostIndexOfMask, this->data.cbegin() + rightMostIndexOfMask);
+			}
 		}
 	}
 
