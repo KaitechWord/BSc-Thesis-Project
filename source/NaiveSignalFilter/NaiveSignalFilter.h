@@ -3,6 +3,7 @@
 
 class NaiveSignalFilter : public SignalFilter{
     enum class SignalPart{
+        Full,
         Left,
         Middle,
         Right

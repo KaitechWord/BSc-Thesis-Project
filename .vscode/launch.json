@@ -5,12 +5,12 @@
             "name": "Debug Signal",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/Signal",  // Path to your compiled binary
-            "args": [],  // Command-line arguments (if any)
+            "program": "${workspaceFolder}/bin/Signal", // Path to your compiled binary
+            "args": [],
             "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",  // Working directory (where the binary is located)
+            "cwd": "${workspaceFolder}", // The working directory for the binary
             "environment": [],
-            "externalConsole": false,  // Use an external terminal for input/output
+            "externalConsole": false, // Use an external terminal for input/output
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -19,11 +19,33 @@
                     "ignoreFailures": true
                 }
             ],
-            "miDebuggerPath": "/usr/bin/gdb",  // Path to gdb
-            "preLaunchTask": "",  // Task to run before launching (optional)
-            "sourceFileMap": {
-                "/build/source": "${workspaceFolder}"
-            },
+            "miDebuggerPath": "/usr/bin/gdb", // Ensure this points to your gdb location
+            "logging": {
+                "moduleLoad": false,
+                "trace": true,
+                "traceResponse": true,
+                "engineLogging": false
+            }
+        },
+        {
+            "name": "Debug SignalTests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/SignalTests", // Path to your compiled binary
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}", // The working directory for the binary
+            "environment": [],
+            "externalConsole": false, // Use an external terminal for input/output
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb", // Ensure this points to your gdb location
             "logging": {
                 "moduleLoad": false,
                 "trace": true,
