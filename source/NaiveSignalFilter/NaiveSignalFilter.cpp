@@ -106,21 +106,21 @@ void NaiveSignalFilter::filter(std::vector<uint8_t> &newSignal, int firstIndex,
         int leftMostIndexOfMask =
             std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
         int rightMostIndexOfMask =
-            std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
+            std::clamp(i + maskOneHalfLength, 0, signalSize - 1) + 1;
         newSignal[i] =
             *std::min_element(this->data.cbegin() + leftMostIndexOfMask,
                               this->data.cbegin() + rightMostIndexOfMask);
       }
     } else if (part == SignalPart::Left) {
       for (int i = firstIndex; i <= lastIndex; ++i) {
-        int rightMostIndexOfMask = i + maskOneHalfLength;
+        int rightMostIndexOfMask = i + maskOneHalfLength + 1;
         newSignal[i] = *std::min_element(
             this->data.cbegin(), this->data.cbegin() + rightMostIndexOfMask);
       }
     } else if (part == SignalPart::Middle) {
       for (int i = firstIndex; i <= lastIndex; ++i) {
         int leftMostIndexOfMask = i - maskOneHalfLength;
-        int rightMostIndexOfMask = i + maskOneHalfLength;
+        int rightMostIndexOfMask = i + maskOneHalfLength + 1;
         newSignal[i] =
             *std::min_element(this->data.cbegin() + leftMostIndexOfMask,
                               this->data.cbegin() + rightMostIndexOfMask);
@@ -128,7 +128,7 @@ void NaiveSignalFilter::filter(std::vector<uint8_t> &newSignal, int firstIndex,
     } else {
       for (int i = firstIndex; i <= lastIndex; ++i) {
         int leftMostIndexOfMask = i - maskOneHalfLength;
-        int rightMostIndexOfMask = signalSize - 1;
+        int rightMostIndexOfMask = signalSize;
         newSignal[i] =
             *std::min_element(this->data.cbegin() + leftMostIndexOfMask,
                               this->data.cbegin() + rightMostIndexOfMask);
@@ -140,21 +140,21 @@ void NaiveSignalFilter::filter(std::vector<uint8_t> &newSignal, int firstIndex,
         int leftMostIndexOfMask =
             std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
         int rightMostIndexOfMask =
-            std::clamp(i + maskOneHalfLength, 0, signalSize - 1);
+            std::clamp(i + maskOneHalfLength, 0, signalSize - 1) + 1;
         newSignal[i] =
             *std::max_element(this->data.cbegin() + leftMostIndexOfMask,
                               this->data.cbegin() + rightMostIndexOfMask);
       }
     } else if (part == SignalPart::Left) {
       for (int i = firstIndex; i <= lastIndex; ++i) {
-        int rightMostIndexOfMask = i + maskOneHalfLength;
+        int rightMostIndexOfMask = i + maskOneHalfLength + 1;
         newSignal[i] = *std::max_element(
             this->data.cbegin(), this->data.cbegin() + rightMostIndexOfMask);
       }
     } else if (part == SignalPart::Middle) {
       for (int i = firstIndex; i <= lastIndex; ++i) {
         int leftMostIndexOfMask = i - maskOneHalfLength;
-        int rightMostIndexOfMask = i + maskOneHalfLength;
+        int rightMostIndexOfMask = i + maskOneHalfLength + 1;
         newSignal[i] =
             *std::max_element(this->data.cbegin() + leftMostIndexOfMask,
                               this->data.cbegin() + rightMostIndexOfMask);
@@ -162,7 +162,7 @@ void NaiveSignalFilter::filter(std::vector<uint8_t> &newSignal, int firstIndex,
     } else {
       for (int i = firstIndex; i <= lastIndex; ++i) {
         int leftMostIndexOfMask = i - maskOneHalfLength;
-        int rightMostIndexOfMask = signalSize - 1;
+        int rightMostIndexOfMask = signalSize;
         newSignal[i] =
             *std::max_element(this->data.cbegin() + leftMostIndexOfMask,
                               this->data.cbegin() + rightMostIndexOfMask);
