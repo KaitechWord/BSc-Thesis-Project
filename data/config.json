@@ -4,7 +4,7 @@
                         "Variant": "MIN",
                         "Approach": "NAIVE",
                         "DataPath": "/data/signal.txt",
-                        "MaskSize": 45
+                        "MaskSize": 5
                     },
     "ImageFilter": {
                         "Variant": "MIN",
