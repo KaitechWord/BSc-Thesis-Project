@@ -10,9 +10,12 @@ def create_data(N: int):
 
 
 def naive_v1(data, W: int):
-  data_stacked = tuple((data[i : i + W] for i in range(len(data) - W - 1)))
+  print(data)
+  data_stacked = tuple(data[i : i + len(data) - W + 1] for i in range(W))
   v = np.vstack(data_stacked)
-  output = np.min(v, axis = 1)
+  print(v)
+  output = np.min(v, axis = 0)
+  print(output)
   return output
 
 
@@ -53,7 +56,7 @@ def min_filter1d_valid_strided(a, W):
 
 
 if __name__ == "__main__":
-  N = 10
+  N = 30_000_000
   #W = int(sys.argv[1])  # window size
   #assert N >= W
   print("Number of elements: ", N)
