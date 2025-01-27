@@ -10,12 +10,10 @@ def create_data(N: int):
 
 
 def naive_v1(data, W: int):
-  print(data)
   data_stacked = tuple(data[i : i + len(data) - W + 1] for i in range(W))
   v = np.vstack(data_stacked)
-  print(v)
+  # print(v)
   output = np.min(v, axis = 0)
-  print(output)
   return output
 
 
@@ -56,7 +54,7 @@ def min_filter1d_valid_strided(a, W):
 
 
 if __name__ == "__main__":
-  N = 30_000_000
+  N = 10
   #W = int(sys.argv[1])  # window size
   #assert N >= W
   print("Number of elements: ", N)
@@ -68,11 +66,11 @@ if __name__ == "__main__":
     data = create_data(N)
     
     for attempt in range(5):
-      # print(data)
+      print(data)
       t1 = time.time()
       output1 = naive_v1(data, W)
       t2 = time.time()
-      # print(output1)
+      print(output1)
       print(f"naive_v1, elapsed time = {t2 - t1} sec, i.e., {round((len(data) / (t2 - t1)) / 1e6, 2):,} M elem / sec")
     print()
 

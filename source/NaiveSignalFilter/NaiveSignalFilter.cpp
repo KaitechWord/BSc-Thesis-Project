@@ -102,6 +102,15 @@ void NaiveSignalFilter::filter(std::vector<uint8_t> &newSignal, int firstIndex,
   auto targetValue = this->startingValue;
   if (this->algType == AlgorithmType::MIN) {
     if (part == SignalPart::Full) {
+      for (int i = 0; i < maskSize; ++i) {
+        int leftMostIndexOfMask =
+            std::clamp(firstIndex - maskOneHalfLength, 0, signalSize - 1);
+        int rightMostIndexOfMask =
+            std::clamp(lastIndex + maskOneHalfLength, 0, signalSize - 1) + 1;
+        newSignal[i] =
+            *std::min_element(this->data.cbegin() + leftMostIndexOfMask,
+                              this->data.cbegin() + rightMostIndexOfMask);
+      }
       for (int i = firstIndex; i <= lastIndex; ++i) {
         int leftMostIndexOfMask =
             std::clamp(i - maskOneHalfLength, 0, signalSize - 1);
