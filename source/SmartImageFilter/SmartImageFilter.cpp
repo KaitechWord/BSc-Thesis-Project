@@ -75,19 +75,12 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	//Flatten 3D array
 	std::vector<uchar> prefixesPostfixes(cols * maskSize * maskSize);
 	auto lastRowIndex = 0;
+	auto rowIndex = firstIndex / cols;
+	auto colIndex = firstIndex - (rowIndex * cols);
 	// "i" is always the centre of first mask
-	for (auto i = firstIndex; i <= lastIndex; i = std::min(i + maskSize + 1, lastIndex)) {
-		//sprytniejsze obliczenie rowIndex i colIndex (dzielenie i modulo jest kozstowne)
-		auto rowIndex = i / cols;
-		auto colIndex = i % cols;
-
-		//pomyslec nad tym aby w i = std::min(i + maskSize + 1, lastIndex) bylo prawidlowo obliczane
-		if (lastRowIndex < rowIndex) {
-			lastRowIndex = rowIndex;
-			i = cols * rowIndex;
-			colIndex = 0;
-		}
-
+	for (auto i = firstIndex; i <= lastIndex; ) {
+		if (i > lastIndex)
+			i = lastIndex;
 		auto firstMaskFarLeftIndex = std::clamp(colIndex - maskOneHalfLength, 0, cols - 1);
 		auto firstMaskFarRightIndex = std::clamp(colIndex + maskOneHalfLength, 0, cols - 1);
 		auto presecondMaskCentreIndex = std::clamp(colIndex + maskSize, 0, cols - 1);
@@ -96,32 +89,37 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		auto farTopIndex = std::clamp(rowIndex - maskOneHalfLength, 0, rows - 1);
 		auto farBotIndex = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
 
+		const auto modFarTopIndex = farTopIndex % maskSize;
+		auto modFarTopIndexCopy = modFarTopIndex;
 		for (auto j = farTopIndex; j <= farBotIndex; ++j) {
 			//pozbyc sie modulo na rzecz ifa (++ z poprzedniej wartosci j)
-			prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, j % maskSize, cols, maskSize)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
+			prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, modFarTopIndexCopy, cols, maskSize)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
 			//Prefixes - first mask
 			for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
 				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), j % maskSize, cols, maskSize)];
+				auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), modFarTopIndexCopy, cols, maskSize)];
 				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)] = currentValue;
+					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, modFarTopIndexCopy, cols, maskSize)] = currentValue;
 				}
 				else {
-					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, j % maskSize, cols, maskSize)] = oldValue;
+					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, modFarTopIndexCopy, cols, maskSize)] = oldValue;
 				}
 			}
 
-			prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, j % maskSize, cols, maskSize)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);
+			prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, modFarTopIndexCopy, cols, maskSize)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);
 			//Postfixes - secondmask
 			for (auto k = secondMaskFarLeftIndex + 1; k <= secondMaskFarRightIndex; ++k) {
 				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)];
+				auto oldValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - 1 - secondMaskFarLeftIndex, modFarTopIndexCopy, cols, maskSize)];
 				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)] = currentValue;
+					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, modFarTopIndexCopy, cols, maskSize)] = currentValue;
 				}
 				else {
-					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, j % maskSize, cols, maskSize)] = oldValue;
+					prefixesPostfixes[getIndex(secondMaskFarLeftIndex, k - secondMaskFarLeftIndex, modFarTopIndexCopy, cols, maskSize)] = oldValue;
 				}
+			}
+			if (++modFarTopIndexCopy == maskSize) {
+				modFarTopIndexCopy = 0;
 			}
 		}
 
@@ -130,20 +128,25 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 
 		//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
 		//Iterating from top row of mask up to bottom row of mask
-		auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize)];
+		const auto modFarTopIndexNext = (farTopIndex + 1) % maskSize;
+		auto modFarTopIndexNextCopy = modFarTopIndexNext;
+		modFarTopIndexCopy = modFarTopIndex;
+		auto bestValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, modFarTopIndex, cols, maskSize)];
 		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-			auto currentValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, k % maskSize, cols, maskSize)];
+			auto currentValue = prefixesPostfixes[getIndex(firstMaskFarLeftIndex, firstMaskFarRightIndex - firstMaskFarLeftIndex, modFarTopIndexNextCopy, cols, maskSize)];
 			if (this->compare(currentValue, bestValue)) {
 				bestValue = currentValue;
 			}
+			if (++modFarTopIndexNextCopy == maskSize)
+				modFarTopIndexNextCopy = 0;
 		}
 		newImage.at<uchar>(rowIndex, firstMaskCentreIndex) = bestValue;
 		//Finding best value for indices that are mix of prefixes from first mask and postfixes from second mask
 		for (auto j = firstMaskCentreIndex + 1; j < secondMaskCentreIndex; ++j) {
 			auto currentMaskLeftMost = std::clamp(j - maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
 			auto currentMaskRightMost = std::clamp(j + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
-			auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize)];
-			auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, farTopIndex % maskSize, cols, maskSize)];
+			auto firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, modFarTopIndex, cols, maskSize)];
+			auto secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, modFarTopIndex, cols, maskSize)];
 			int bestValue;
 			if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 				bestValue = firstPartOfMaskValue;
@@ -152,9 +155,11 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 				bestValue = secondPartOfMaskValue;
 			}
 			//Iterating from top row of mask up to bottom row of mask
+
+			modFarTopIndexNextCopy = modFarTopIndexNext;
 			for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-				firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, k % maskSize, cols, maskSize)];
-				secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, k % maskSize, cols, maskSize)];
+				firstPartOfMaskValue = prefixesPostfixes[getIndex(currentMaskLeftMost, firstMaskFarRightIndex - currentMaskLeftMost, modFarTopIndexNextCopy, cols, maskSize)];
+				secondPartOfMaskValue = prefixesPostfixes[getIndex(secondMaskFarLeftIndex, currentMaskRightMost - secondMaskFarLeftIndex, modFarTopIndexNextCopy, cols, maskSize)];
 				//na sztywno std::min / std::max jedno z tych - sprobowac
 				if (this->compare(firstPartOfMaskValue, secondPartOfMaskValue)) {
 					if (this->compare(firstPartOfMaskValue, bestValue)) {
@@ -166,6 +171,8 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 						bestValue = secondPartOfMaskValue;
 					}
 				}
+				if (++modFarTopIndexNextCopy == maskSize)
+					modFarTopIndexNextCopy = 0;
 			}
 			newImage.at<uchar>(rowIndex, j) = bestValue;
 		}
@@ -173,14 +180,28 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		auto currentMaskRightMost = std::clamp(secondMaskCentreIndex + maskOneHalfLength, firstMaskFarLeftIndex, secondMaskFarRightIndex);
 		//Finding best value for last index from second mask (it is separate case - we need to only use postfixes from second mask)
 		//Iterating from top row of mask up to bottom row of mask
-		bestValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, farTopIndex % maskSize, cols, maskSize)];
+		bestValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, modFarTopIndex, cols, maskSize)];
+		modFarTopIndexNextCopy = modFarTopIndexNext;
 		for (auto k = farTopIndex + 1; k <= farBotIndex; ++k) {
-			auto currentValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, k % maskSize, cols, maskSize)];
+			auto currentValue = prefixesPostfixes[getIndex(currentMaskLeftMost, currentMaskRightMost - currentMaskLeftMost, modFarTopIndexNextCopy, cols, maskSize)];
 			if (this->compare(currentValue, bestValue)) {
 				bestValue = currentValue;
 			}
+			if (++modFarTopIndexNextCopy == maskSize)
+				modFarTopIndexNextCopy = 0;
 		}
 		newImage.at<uchar>(rowIndex, secondMaskCentreIndex) = bestValue;
+
+		colIndex += maskSize + 1;  // Move to next mask position
+
+		if (colIndex >= cols) {  // Check if we need to transition to a new row
+			rowIndex++;
+			colIndex = 0;
+			i = rowIndex * cols;  // Move to the first column of the new row
+		}
+		else {
+			i += maskSize + 1;
+		}
 
 		if (i == lastIndex)
 			break;
