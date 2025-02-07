@@ -58,6 +58,7 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	outfile.close();
 }
 
+//uproscic te mnozenia, w jednym miejscu sie powtarzaja wielokrotnie mozna
 inline int getIndex(int startColIndex, int endColIndex, int rowIndex, int colsSize, int maskSize)
 {
 	//maskSize * maskSize wyeliminowac - jedna zmienna
@@ -81,13 +82,13 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	for (auto i = firstIndex; i <= lastIndex; ) {
 		if (i > lastIndex)
 			i = lastIndex;
-		auto firstMaskFarLeftIndex = std::clamp(colIndex - maskOneHalfLength, 0, cols - 1);
-		auto firstMaskFarRightIndex = std::clamp(colIndex + maskOneHalfLength, 0, cols - 1);
+		auto firstMaskFarLeftIndex = std::max(colIndex - maskOneHalfLength, 0);
+		auto firstMaskFarRightIndex = std::min(colIndex + maskOneHalfLength, cols - 1);
 		auto presecondMaskCentreIndex = std::clamp(colIndex + maskSize, 0, cols - 1);
-		auto secondMaskFarLeftIndex = std::clamp(presecondMaskCentreIndex - maskOneHalfLength, 0, cols - 1);
-		auto secondMaskFarRightIndex = std::clamp(presecondMaskCentreIndex + maskOneHalfLength, 0, cols - 1);
-		auto farTopIndex = std::clamp(rowIndex - maskOneHalfLength, 0, rows - 1);
-		auto farBotIndex = std::clamp(rowIndex + maskOneHalfLength, 0, rows - 1);
+		auto secondMaskFarLeftIndex = std::max(presecondMaskCentreIndex - maskOneHalfLength, 0);
+		auto secondMaskFarRightIndex = std::min(presecondMaskCentreIndex + maskOneHalfLength, cols - 1);
+		auto farTopIndex = std::max(rowIndex - maskOneHalfLength, 0);
+		auto farBotIndex = std::min(rowIndex + maskOneHalfLength, rows - 1);
 
 		const auto modFarTopIndex = farTopIndex % maskSize;
 		auto modFarTopIndexCopy = modFarTopIndex;

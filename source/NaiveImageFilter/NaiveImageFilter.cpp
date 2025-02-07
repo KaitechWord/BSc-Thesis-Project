@@ -77,6 +77,9 @@ void NaiveImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	auto lastRow = firstIndexRow;
 	auto lastCol = firstIndexCol;
 
+	// dodac najbardziej naiwne podejscie
+	// liczniki do elementarnych operacji - porownania(compare) / przypisania / ify - spelnioine - weszlismy do if i podmienilismy wartosc
+
 	//First iteration
 	auto rowIndex = firstIndex / colSize;
 	auto colIndex = firstIndex % colSize;
