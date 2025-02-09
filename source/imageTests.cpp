@@ -14,10 +14,11 @@ TEST_CASE("NaiveImageFilter") {
 	FileManager fileManager;
 	fileManager.loadImageFromFile(imageInfo.dataPath);
 	cv::Mat image;
-	fileManager.getLoadedImage(image);
+	image = fileManager.getLoadedImage();
 
 	cv::Mat testImage;
-	fileManager.getLoadedImage(testImage);
+	testImage = cv::imread(imageInfo.dataPath);
+	cv::cvtColor(testImage, testImage, cv::COLOR_BGR2GRAY);
 
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(imageInfo.maskSize, imageInfo.maskSize));
 
@@ -72,10 +73,11 @@ TEST_CASE("SmartImageFilter") {
 	FileManager fileManager;
 	fileManager.loadImageFromFile(imageInfo.dataPath);
 	cv::Mat image;
-	fileManager.getLoadedImage(image);
+	image = fileManager.getLoadedImage();
 
 	cv::Mat testImage;
-	fileManager.getLoadedImage(testImage);
+	testImage = cv::imread(imageInfo.dataPath);
+	cv::cvtColor(testImage, testImage, cv::COLOR_BGR2GRAY);
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(imageInfo.maskSize, imageInfo.maskSize));
 
 	SECTION("MIN") {

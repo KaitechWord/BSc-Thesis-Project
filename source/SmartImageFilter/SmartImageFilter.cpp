@@ -78,6 +78,7 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	auto lastRowIndex = 0;
 	auto rowIndex = firstIndex / cols;
 	auto colIndex = firstIndex - (rowIndex * cols);
+	auto doubleMaskSize = maskSize * maskSize;
 	// "i" is always the centre of first mask
 	for (auto i = firstIndex; i <= lastIndex; ) {
 		if (i > lastIndex)
@@ -94,17 +95,28 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		auto modFarTopIndexCopy = modFarTopIndex;
 		for (auto j = farTopIndex; j <= farBotIndex; ++j) {
 			//pozbyc sie modulo na rzecz ifa (++ z poprzedniej wartosci j)
-			prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, modFarTopIndexCopy, cols, maskSize)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
+			// prefixesPostfixes[getIndex(firstMaskFarRightIndex, 0, modFarTopIndexCopy, cols, maskSize)] = this->data.at<uchar>(j, firstMaskFarRightIndex);
+			auto flattenColIndexStart = firstMaskFarRightIndex * doubleMaskSize;
+			auto flattenColIndexEnd = 0;
+			auto flattenRowIndex = modFarTopIndexCopy;
+			prefixesPostfixes[flattenColIndexStart + flattenColIndexEnd + flattenRowIndex] = this->data.at<uchar>(j, firstMaskFarRightIndex);
 			//Prefixes - first mask
+			flattenColIndexStart -= doubleMaskSize;
+			flattenColIndexEnd += maskSize;
 			for (auto k = firstMaskFarRightIndex - 1; k >= firstMaskFarLeftIndex; --k) {
 				auto currentValue = this->data.at<uchar>(j, k);
-				auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), modFarTopIndexCopy, cols, maskSize)];
+				// auto oldValue = prefixesPostfixes[getIndex(k + 1, firstMaskFarRightIndex - (k + 1), modFarTopIndexCopy, cols, maskSize)];
+				auto oldValue = prefixesPostfixes[(flattenColIndexStart + doubleMaskSize) + (flattenColIndexEnd - maskSize) + flattenRowIndex ];
 				if (this->compare(currentValue, oldValue)) {
-					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, modFarTopIndexCopy, cols, maskSize)] = currentValue;
+					// prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, modFarTopIndexCopy, cols, maskSize)] = currentValue;
+					prefixesPostfixes[(flattenColIndexStart) + (flattenColIndexEnd) + flattenRowIndex] = currentValue;
 				}
 				else {
-					prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, modFarTopIndexCopy, cols, maskSize)] = oldValue;
+					// prefixesPostfixes[getIndex(k, firstMaskFarRightIndex - k, modFarTopIndexCopy, cols, maskSize)] = oldValue;
+					prefixesPostfixes[(flattenColIndexStart) + (flattenColIndexEnd) + flattenRowIndex] = oldValue;
 				}
+				flattenColIndexStart -= doubleMaskSize;
+				flattenColIndexEnd += maskSize;
 			}
 
 			prefixesPostfixes[getIndex(secondMaskFarLeftIndex, 0, modFarTopIndexCopy, cols, maskSize)] = this->data.at<uchar>(j, secondMaskFarLeftIndex);

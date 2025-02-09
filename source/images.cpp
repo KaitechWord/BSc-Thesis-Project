@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 	FileManager fileManager;
 	fileManager.loadImageFromFile(imageInfo.dataPath);
 	cv::Mat image;
-	fileManager.getLoadedImage(image);
+	image = fileManager.getLoadedImage();
 
 	std::unique_ptr<ImageFilter> imageFilter = imageInfo.approach == FilterApproach::NAIVE ? std::unique_ptr< ImageFilter >(std::make_unique<NaiveImageFilter>(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize))
 		: std::unique_ptr< ImageFilter >(std::make_unique<SmartImageFilter>(imageInfo.threadsNum, imageInfo.variant, imageInfo.maskSize));

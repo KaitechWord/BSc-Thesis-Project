@@ -18,7 +18,7 @@ class FileManager{
         void saveSignalToFile(std::vector<int>& signal, const std::string& fileName);
         void saveImageToFile(cv::Mat &image, const std::string& fileName);
         void getLoadedSignal(std::vector<int>&signal);
-        void getLoadedImage(cv::Mat& image);
+        cv::Mat getLoadedImage();
         ~FileManager();
     private:
         void openFile(const std::string &fileName, FileType fileType);
