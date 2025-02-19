@@ -37,6 +37,6 @@ int main(int argc, char* argv[]) {
 	imageFilter->apply(image);
 	if (argc == 1)
 		fileManager.saveImageToFile(image, std::string(ROOT_DIR) + "/output/imageResult.png");
-
+	exit(0);
 	return 0;
 }
