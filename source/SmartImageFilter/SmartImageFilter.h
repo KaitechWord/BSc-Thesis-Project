@@ -15,7 +15,7 @@ struct Indices
 	int bot;
 	int row;
 };
-using Precalculations = std::unordered_map<int, std::unordered_map<int, std::unordered_map<int, uchar>>>;
+using Precalculations = std::vector< int >;
 
 public:
 	SmartImageFilter(int threadNum, AlgorithmType algType, int maskSize);
