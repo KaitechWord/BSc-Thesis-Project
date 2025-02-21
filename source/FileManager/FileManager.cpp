@@ -49,8 +49,8 @@ void FileManager::getLoadedSignal(std::vector<int>& signal) {
 	signal = this->signal;
 }
 
-void FileManager::getLoadedImage(cv::Mat& image) {
-	image = this->image;
+cv::Mat FileManager::getLoadedImage() {
+	return this->image;
 }
 
 void FileManager::saveSignalToFile(std::vector<int>& signal, const std::string& fileName) {
