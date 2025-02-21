@@ -213,7 +213,5 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		setExtrema( newImage, indices, affixesPrecalculations );
 
 		updateRowColumnAndIndex( row, column , i);
-		if (i >= lastIndex)
-			break;
 	}
 }
