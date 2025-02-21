@@ -1,5 +1,5 @@
 {
-    "ThreadsNumber": 5,
+    "ThreadsNumber": 1,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
@@ -9,7 +9,7 @@
     "ImageFilter": {
                         "Variant": "MIN",
                         "Approach": "SMART",
-                        "DataPath": "/data/LakeMountain.jpg",
+                        "DataPath": "/data/lena-male.png",
                         "MaskSize": 5
                     }
 }
