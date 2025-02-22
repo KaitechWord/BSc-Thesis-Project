@@ -29,7 +29,8 @@ public:
 private:
 	void filter(cv::Mat& newImage, int firstIndex, int lastIndex);
 
-	int getIndex( const Indices& indices, int left, int right, int row );
+	int getIndexPrefix( const Indices& indices, int left, int right, int row );
+	int getIndexSuffix( const Indices& indices, int left, int right, int row );
 
 	void calculatePrefixes( const Indices& indices, Precalculation& precalculation, int row );
 
