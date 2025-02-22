@@ -59,27 +59,37 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	outfile.close();
 }
 
+int SmartImageFilter::getIndex( const Indices& indices, int left, int right, int row ){
+	auto relativeLeft = left - indices.firstMask.left;
+	auto relativeRight = right - indices.firstMask.left;
+	auto relativeRow = row - indices.top;
+	return  this->maskSize * 2*this->maskSize * relativeLeft + this->maskSize * relativeRight + relativeRow;
+}
+
 void SmartImageFilter::calculatePrefixes( const Indices& indices, Precalculations& precalculations, int row )
 {
-	auto prefixRightIndex = indices.firstMask.right; 
-	precalculations[ row * this->data.cols * this->data.cols + this->data.cols * prefixRightIndex + prefixRightIndex ] = this->data.at<uchar>(row, prefixRightIndex);
+	auto prefixRightIndex = indices.firstMask.right;
+	precalculations[ getIndex( indices, prefixRightIndex, prefixRightIndex, row ) ] = this->data.at<uchar>(row, prefixRightIndex);
+	// precalculations[ row * this->data.cols * this->data.cols + this->data.cols * prefixRightIndex + prefixRightIndex ] = this->data.at<uchar>(row, prefixRightIndex);
 	for (auto prefixLeftIndex = prefixRightIndex - 1; prefixLeftIndex >= indices.firstMask.left; --prefixLeftIndex) {
 		auto freshValue = this->data.at<uchar>(row, prefixLeftIndex);
-		auto previousPrefixValue = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * (prefixLeftIndex + 1) + prefixRightIndex ];
-		precalculations[ row * this->data.cols * this->data.cols + this->data.cols * prefixLeftIndex + prefixRightIndex ] = this->compare(freshValue, previousPrefixValue) ? freshValue : previousPrefixValue;
+		auto previousPrefixValue = precalculations[ getIndex( indices, (prefixLeftIndex + 1), prefixRightIndex, row ) ];
+		// auto previousPrefixValue = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * (prefixLeftIndex + 1) + prefixRightIndex ];
+		precalculations[ getIndex( indices, prefixLeftIndex, prefixRightIndex, row ) ] = this->compare(freshValue, previousPrefixValue) ? freshValue : previousPrefixValue;
+		// precalculations[ row * this->data.cols * this->data.cols + this->data.cols * prefixLeftIndex + prefixRightIndex ] = this->compare(freshValue, previousPrefixValue) ? freshValue : previousPrefixValue;
 	}
 }
 
 void SmartImageFilter::calculateSuffixes( const Indices& indices, Precalculations& precalculations, int row )
 {
 	auto suffixLeftIndex = indices.secondMask.left; 
-	precalculations[ row * this->data.cols * this->data.cols + this->data.cols * suffixLeftIndex + suffixLeftIndex ] = this->data.at<uchar>(row, suffixLeftIndex);
+	precalculations[ getIndex( indices, suffixLeftIndex, suffixLeftIndex, row ) ] = this->data.at<uchar>(row, suffixLeftIndex);
 	// precalculations[suffixLeftIndex][suffixLeftIndex][row] = this->data.at<uchar>(row, suffixLeftIndex);
 	for (auto suffixRightIndex = suffixLeftIndex + 1; suffixRightIndex <= indices.secondMask.right; ++suffixRightIndex) {
 		auto freshValue = this->data.at<uchar>(row, suffixRightIndex);
-		auto previousSuffixValue = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * suffixLeftIndex + suffixRightIndex - 1 ];
+		auto previousSuffixValue = precalculations[ getIndex( indices, suffixLeftIndex, suffixRightIndex - 1, row ) ];
 		// auto previousSuffixValue = precalculations[suffixLeftIndex][suffixRightIndex - 1][row];
-		precalculations[ row * this->data.cols * this->data.cols + this->data.cols * suffixLeftIndex + suffixRightIndex ] = this->compare(freshValue, previousSuffixValue) ? freshValue : previousSuffixValue;
+		precalculations[ getIndex( indices, suffixLeftIndex, suffixRightIndex, row ) ] = this->compare(freshValue, previousSuffixValue) ? freshValue : previousSuffixValue;
 		// precalculations[suffixLeftIndex][suffixRightIndex][row] = this->compare(freshValue, previousSuffixValue) ? freshValue : previousSuffixValue;
 	}
 }
@@ -94,10 +104,10 @@ void SmartImageFilter::precalculate( const Indices& indices, Precalculations& pr
 
 void SmartImageFilter::setPrefixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations )
 {
-	auto extremum = precalculations[ indices.top * this->data.cols * this->data.cols + this->data.cols * indices.firstMask.left + indices.firstMask.right ];
+	auto extremum = precalculations[ getIndex(indices, indices.firstMask.left, indices.firstMask.right, indices.top) ];
 	// auto extremum = precalculations[indices.firstMask.left][indices.firstMask.right][indices.top];
 	for (auto row = indices.top + 1; row <= indices.bot; ++row) {
-		auto currentValue = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * indices.firstMask.left + indices.firstMask.right ];
+		auto currentValue = precalculations[ getIndex( indices, indices.firstMask.left, indices.firstMask.right, row ) ];
 		// auto currentValue = precalculations[indices.firstMask.left][indices.firstMask.right][row];
 		if (this->compare(currentValue, extremum)) {
 			extremum = currentValue;
@@ -114,18 +124,18 @@ void SmartImageFilter::setAffixMixMaskExtrema( cv::Mat& newImage, const Indices&
 		auto currentMaskLeftIndex = std::clamp(affixMixMaskCenterIndex - maskOneHalfLength, indices.firstMask.left, indices.firstMask.right);
 		auto currentMaskRightIndex = std::clamp(affixMixMaskCenterIndex + maskOneHalfLength, indices.secondMask.left, indices.secondMask.right);
 
-		auto prefixPartOfMaskExtremum = precalculations[ indices.top * this->data.cols * this->data.cols + this->data.cols * currentMaskLeftIndex + indices.firstMask.right ];
+		auto prefixPartOfMaskExtremum = precalculations[ getIndex( indices, currentMaskLeftIndex, indices.firstMask.right, indices.top ) ];
 		// auto prefixPartOfMaskExtremum = precalculations[currentMaskLeftIndex][indices.firstMask.right][indices.top];
-		auto suffixPartOfMaskExtremum = precalculations[ indices.top * this->data.cols * this->data.cols + this->data.cols * indices.secondMask.left + currentMaskRightIndex ];
+		auto suffixPartOfMaskExtremum = precalculations[ getIndex( indices, indices.secondMask.left, currentMaskRightIndex, indices.top ) ];
 		// auto suffixPartOfMaskExtremum = precalculations[indices.secondMask.left][currentMaskRightIndex][indices.top];
 
 		auto extremum = this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum) ? prefixPartOfMaskExtremum : suffixPartOfMaskExtremum ;
 		
 		//Iterating from top row of mask up to bottom row of mask
 		for (auto row = indices.top + 1; row <= indices.bot; ++row) {
-			prefixPartOfMaskExtremum = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * currentMaskLeftIndex + indices.firstMask.right ];
+			prefixPartOfMaskExtremum = precalculations[ getIndex( indices, currentMaskLeftIndex, indices.firstMask.right, row ) ];
 			// prefixPartOfMaskExtremum = precalculations[currentMaskLeftIndex][indices.firstMask.right][row];
-			suffixPartOfMaskExtremum = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * indices.secondMask.left + currentMaskRightIndex ];
+			suffixPartOfMaskExtremum = precalculations[ getIndex( indices, indices.secondMask.left, currentMaskRightIndex, row ) ];
 			// suffixPartOfMaskExtremum = precalculations[indices.secondMask.left][currentMaskRightIndex][row];
 
 			if (this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum)) {
@@ -145,10 +155,10 @@ void SmartImageFilter::setAffixMixMaskExtrema( cv::Mat& newImage, const Indices&
 
 void SmartImageFilter::setSuffixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations )
 {
-	auto extremum = precalculations[ indices.top * this->data.cols * this->data.cols + this->data.cols * indices.secondMask.left + indices.secondMask.right ];
+	auto extremum = precalculations[ getIndex( indices, indices.secondMask.left, indices.secondMask.right, indices.top ) ];
 	// auto extremum = precalculations[indices.secondMask.left][indices.secondMask.right][indices.top];
 	for (auto row = indices.top + 1; row <= indices.bot; ++row) {
-		auto currentValue = precalculations[ row * this->data.cols * this->data.cols + this->data.cols * indices.secondMask.left + indices.secondMask.right ];
+		auto currentValue = precalculations[ getIndex( indices, indices.secondMask.left, indices.secondMask.right, row ) ];
 		// auto currentValue = precalculations[indices.secondMask.left][indices.secondMask.right][row];
 		if (this->compare(currentValue, extremum)) {
 			extremum = currentValue;
@@ -211,8 +221,9 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
     // Suffix (after the root)
     // Infix (inside the root, though rare in English)
 	Precalculations affixesPrecalculations;
-	
-	affixesPrecalculations.reserve( this->data.cols * this->data.cols * this->data.rows + this->data.cols * this->data.cols + this->data.cols );
+	// Flatten array of 3 dimensions - startIndexOfMask, endIndexOfMask, row
+	//(  )
+	affixesPrecalculations.reserve( this->maskSize * 2*this->maskSize * 2*this->maskSize + this->maskSize * 2*this->maskSize + this->maskSize );
 
 	auto row = firstIndex / this->data.cols;
 	auto column = firstIndex - (row * this->data.cols);
@@ -225,5 +236,6 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		setExtrema( newImage, indices, affixesPrecalculations );
 
 		updateRowColumnAndIndex( row, column , i);
+		affixesPrecalculations.clear();
 	}
 }
