@@ -95,6 +95,12 @@ void SmartImageFilter::calculateSuffixes( const Indices& indices, Precalculation
 	}
 }
 
+void SmartImageFilter::precalculateOnlyLast( const Indices& indices, Precalculations& precalculations )
+{
+	calculatePrefixes( indices, precalculations.prefixes, indices.bot );
+	calculateSuffixes( indices, precalculations.suffixes, indices.bot );
+}
+
 void SmartImageFilter::precalculate( const Indices& indices, Precalculations& precalculations )
 {
 	for (auto row = indices.top; row <= indices.bot; ++row) {
@@ -219,13 +225,17 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	affixesPrecalculations.prefixes.reserve( this->maskSize * this->maskSize * this->maskSize + this->maskSize * this->maskSize + this->maskSize );
 	affixesPrecalculations.suffixes.reserve( this->maskSize * this->maskSize * this->maskSize + this->maskSize * this->maskSize + this->maskSize );
 
-	auto row = firstIndex / this->data.cols;
+	auto initRow = firstIndex / this->data.cols;
+	auto row = initRow;
 	auto column = firstIndex - (row * this->data.cols);
-	auto indices = Indices{};
+	auto indices = Indices{{ static_cast<long unsigned int>(this->data.cols), {-1, -1}}};
 	// "i" is always the centre of first mask
 	for (auto i = firstIndex; i <= lastIndex; ) {
 		updateIndices(indices, row, column);
 
+		if( auto& extremumCoordinates = indices.extremaCoordinates.at(i); extremumCoordinates.row ){
+
+		}
 		precalculate( indices, affixesPrecalculations );
 		setExtrema( newImage, indices, affixesPrecalculations );
 

@@ -4,8 +4,14 @@
 
 class SmartImageFilter : public ImageFilter {
 
+struct Coordinates{
+	int row;
+	int column;
+};
+
 struct Indices
 {
+	std::vector< Coordinates > extremaCoordinates;
 	struct MaskIndices
 	{
 		int left;
@@ -15,6 +21,7 @@ struct Indices
 	int top;
 	int bot;
 	int row;
+	
 };
 using Precalculation = std::vector<int>;
 
@@ -37,6 +44,7 @@ private:
 	void calculateSuffixes( const Indices& indices, Precalculation& precalculation, int row );
 
 	void precalculate( const Indices& indices, Precalculations& precalculations );
+	void precalculateOnlyLast( const Indices& indices, Precalculations& precalculations );
 
 	void setPrefixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation );
 
