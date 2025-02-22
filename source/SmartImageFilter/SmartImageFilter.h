@@ -1,5 +1,6 @@
 #pragma once
 #include "../ImageFilter/ImageFilter.h"
+#include <vector>
 
 class SmartImageFilter : public ImageFilter {
 
@@ -15,7 +16,12 @@ struct Indices
 	int bot;
 	int row;
 };
-using Precalculations = std::vector< int >;
+using Precalculation = std::vector<int>;
+
+struct Precalculations{
+	Precalculation prefixes;
+	Precalculation suffixes;
+};
 
 public:
 	SmartImageFilter(int threadNum, AlgorithmType algType, int maskSize);
@@ -25,17 +31,17 @@ private:
 
 	int getIndex( const Indices& indices, int left, int right, int row );
 
-	void calculatePrefixes( const Indices& indices, Precalculations& precalculations, int row );
+	void calculatePrefixes( const Indices& indices, Precalculation& precalculation, int row );
 
-	void calculateSuffixes( const Indices& indices, Precalculations& precalculations, int row );
+	void calculateSuffixes( const Indices& indices, Precalculation& precalculation, int row );
 
 	void precalculate( const Indices& indices, Precalculations& precalculations );
 
-	void setPrefixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations );
+	void setPrefixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation );
 
 	void setAffixMixMaskExtrema( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations );
 
-	void setSuffixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations );
+	void setSuffixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation );
 
 	void setExtrema( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations );
 
