@@ -95,12 +95,6 @@ void SmartImageFilter::calculateSuffixes( const Indices& indices, Precalculation
 	}
 }
 
-void SmartImageFilter::precalculateOnlyLast( const Indices& indices, Precalculations& precalculations )
-{
-	calculatePrefixes( indices, precalculations.prefixes, indices.bot );
-	calculateSuffixes( indices, precalculations.suffixes, indices.bot );
-}
-
 void SmartImageFilter::precalculate( const Indices& indices, Precalculations& precalculations )
 {
 	for (auto row = indices.top; row <= indices.bot; ++row) {
@@ -109,19 +103,50 @@ void SmartImageFilter::precalculate( const Indices& indices, Precalculations& pr
 	}
 }
 
-void SmartImageFilter::setPrefixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation )
+void SmartImageFilter::calculateFreshPrefixes( const Indices& indices, Precalculation& precalculation, int row )
+{
+	auto prefixRightIndex = indices.firstMask.right;
+	precalculation[ getIndexPrefixFromRowToBeOverriden( indices, prefixRightIndex, prefixRightIndex ) ] = this->data.at<uchar>(row, prefixRightIndex);
+	for (auto prefixLeftIndex = prefixRightIndex - 1; prefixLeftIndex >= indices.firstMask.left; --prefixLeftIndex) {
+		auto freshValue = this->data.at<uchar>(row, prefixLeftIndex);
+		auto previousPrefixValue = precalculation[ getIndexPrefixFromRowToBeOverriden( indices, (prefixLeftIndex + 1), prefixRightIndex ) ];
+		precalculation[ getIndexPrefixFromRowToBeOverriden( indices, prefixLeftIndex, prefixRightIndex ) ] = this->compare(freshValue, previousPrefixValue) ? freshValue : previousPrefixValue;
+	}
+}
+
+void SmartImageFilter::calculateFreshSuffixes( const Indices& indices, Precalculation& precalculation, int row )
+{
+	auto suffixLeftIndex = indices.secondMask.left; 
+	precalculation[ getIndexSuffixFromRowToBeOverriden( indices, suffixLeftIndex, suffixLeftIndex ) ] = this->data.at<uchar>(row, suffixLeftIndex);
+	for (auto suffixRightIndex = suffixLeftIndex + 1; suffixRightIndex <= indices.secondMask.right; ++suffixRightIndex) {
+		auto freshValue = this->data.at<uchar>(row, suffixRightIndex);
+		auto previousSuffixValue = precalculation[ getIndexSuffixFromRowToBeOverriden( indices, suffixLeftIndex, suffixRightIndex - 1 ) ];
+		precalculation[ getIndexSuffixFromRowToBeOverriden( indices, suffixLeftIndex, suffixRightIndex ) ] = this->compare(freshValue, previousSuffixValue) ? freshValue : previousSuffixValue;
+	}
+}
+
+void SmartImageFilter::precalculateFreshRow( const Indices& indices, Precalculations& precalculations )
+{
+	calculateFreshPrefixes( indices, precalculations.prefixes, indices.bot );
+	calculateFreshSuffixes( indices, precalculations.suffixes, indices.bot );
+}
+
+void SmartImageFilter::setPrefixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation )
 {
 	auto extremum = precalculation[ getIndexPrefix(indices, indices.firstMask.left, indices.firstMask.right, indices.top) ];
+	auto extremumRow = indices.top;
 	for (auto row = indices.top + 1; row <= indices.bot; ++row) {
 		auto currentValue = precalculation[ getIndexPrefix( indices, indices.firstMask.left, indices.firstMask.right, row ) ];
 		if (this->compare(currentValue, extremum)) {
 			extremum = currentValue;
+			extremumRow = row;
 		}
 	}
 	newImage.at<uchar>(indices.row, indices.firstMask.center) = extremum;
+	indices.lastExtremaRow[ indices.secondMask.center ] = extremumRow;
 }
 
-void SmartImageFilter::setAffixMixMaskExtrema( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations )
+void SmartImageFilter::setAffixMixMaskExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations )
 {
 	auto maskOneHalfLength = static_cast<int>( std::floor(this->maskSize / 2) );
 	for (auto affixMixMaskCenterIndex = indices.firstMask.center + 1; affixMixMaskCenterIndex <= indices.secondMask.center; ++affixMixMaskCenterIndex) {
@@ -133,6 +158,7 @@ void SmartImageFilter::setAffixMixMaskExtrema( cv::Mat& newImage, const Indices&
 		auto suffixPartOfMaskExtremum = precalculations.suffixes[ getIndexSuffix( indices, indices.secondMask.left, currentMaskRightIndex, indices.top ) ];
 
 		auto extremum = this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum) ? prefixPartOfMaskExtremum : suffixPartOfMaskExtremum ;
+		auto  extremumRow= indices.top;
 		
 		//Iterating from top row of mask up to bottom row of mask
 		for (auto row = indices.top + 1; row <= indices.bot; ++row) {
@@ -142,31 +168,37 @@ void SmartImageFilter::setAffixMixMaskExtrema( cv::Mat& newImage, const Indices&
 			if (this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum)) {
 				if (this->compare(prefixPartOfMaskExtremum, extremum)) {
 					extremum = prefixPartOfMaskExtremum;
+					extremumRow = indices.top;
 				}
 			}
 			else {
 				if (this->compare(suffixPartOfMaskExtremum, extremum)) {
 					extremum = suffixPartOfMaskExtremum;
+					extremumRow = indices.top;
 				}
 			}
 		}
 		newImage.at<uchar>(indices.row, affixMixMaskCenterIndex) = extremum;
+		indices.lastExtremaRow[affixMixMaskCenterIndex] = extremumRow;
 	}
 }
 
-void SmartImageFilter::setSuffixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation )
+void SmartImageFilter::setSuffixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation )
 {
 	auto extremum = precalculation[ getIndexSuffix( indices, indices.secondMask.left, indices.secondMask.right, indices.top ) ];
+	auto extremumRow = indices.top;
 	for (auto row = indices.top + 1; row <= indices.bot; ++row) {
 		auto currentValue = precalculation[ getIndexSuffix( indices, indices.secondMask.left, indices.secondMask.right, row ) ];
 		if (this->compare(currentValue, extremum)) {
 			extremum = currentValue;
+			extremumRow = row;
 		}
 	}
 	newImage.at<uchar>(indices.row, indices.secondMask.center) = extremum;
+	indices.lastExtremaRow[ indices.secondMask.center ] = extremumRow;
 }
 
-void SmartImageFilter::setExtrema( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations )
+void SmartImageFilter::setExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations )
 {
 	//Finding best value for left-first index from first mask (it is separate case - we need to only use prefixes from first mask)
 		//Iterating from top row of mask up to bottom row of mask
@@ -178,13 +210,174 @@ void SmartImageFilter::setExtrema( cv::Mat& newImage, const Indices& indices, Pr
 		setSuffixOnlyMaskExtremum( newImage, indices, precalculations.suffixes );
 }
 
+int SmartImageFilter::getIndexPrefixFromRowToBeOverriden(const Indices& indices, int left, int right){
+	auto relativeLeft = left - indices.firstMask.left;
+	auto relativeRight = right - indices.firstMask.left;
+	return this->maskSize * this->maskSize * relativeLeft + this->maskSize * relativeRight + indices.rowToBeOverriden;
+}
+
+int SmartImageFilter::getIndexSuffixFromRowToBeOverriden(const Indices& indices, int left, int right){
+	auto relativeLeft = left - indices.secondMask.left;
+	auto relativeRight = right - indices.secondMask.left;
+	return this->maskSize * this->maskSize * relativeLeft + this->maskSize * relativeRight + indices.rowToBeOverriden;
+}
+
+int SmartImageFilter::getIndexPrefixFresh(const Indices& indices, int left, int right, int row){
+	auto relativeLeft = left - indices.firstMask.left;
+	auto relativeRight = right - indices.secondMask.left;
+	auto relativeRow = row - indices.top;
+	auto relativeRowWithOverridenOffset = relativeRow + row + 1;
+	if(relativeRowWithOverridenOffset >= this->maskSize){
+		relativeRowWithOverridenOffset -= this->maskSize;
+	}
+	return relativeRowWithOverridenOffset;
+}
+
+int SmartImageFilter::getIndexSuffixFresh(const Indices& indices, int left, int right, int row){
+	auto relativeLeft = left - indices.secondMask.left;
+	auto relativeRight = right - indices.secondMask.left;
+	auto relativeRow = row - indices.top;
+	auto relativeRowWithOverridenOffset = relativeRow + row + 1;
+	if(relativeRowWithOverridenOffset >= this->maskSize){
+		relativeRowWithOverridenOffset -= this->maskSize;
+	}
+	return relativeRowWithOverridenOffset;
+}
+
+void SmartImageFilter::setFreshPrefixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation )
+{
+	if( auto lastExtremumRow = indices.lastExtremaRow[indices.firstMask.center]; indices.top <= lastExtremumRow <= indices.bot){
+		auto currentValue = precalculation[ getIndexPrefixFromRowToBeOverriden( indices, indices.firstMask.left, indices.firstMask.right ) ];
+		auto previousValue = newImage.at<uchar>(indices.row - 1, indices.firstMask.center);
+		if( this->compare(currentValue, previousValue) ){
+			newImage.at<uchar>(indices.row, indices.firstMask.center) = currentValue;
+			indices.lastExtremaRow[indices.firstMask.center] = indices.row;
+		} else{
+			newImage.at<uchar>(indices.row, indices.firstMask.center) = previousValue;
+		}
+	} else{
+		auto extremum = precalculation[ getIndexPrefixFresh(indices, indices.firstMask.left, indices.firstMask.right, indices.top) ];
+		auto extremumRow = indices.top;
+		for (auto row = indices.top + 1; row <= indices.bot; ++row) {
+			auto currentValue = precalculation[ getIndexPrefixFresh( indices, indices.firstMask.left, indices.firstMask.right, row ) ];
+			if (this->compare(currentValue, extremum)) {
+				extremum = currentValue;
+				extremumRow = row;
+			}
+		}
+		newImage.at<uchar>(indices.row, indices.firstMask.center) = extremum;
+		indices.lastExtremaRow[ indices.secondMask.center ] = extremumRow;
+	}
+}
+
+void SmartImageFilter::setFreshAffixMixMaskExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations )
+{
+	auto maskOneHalfLength = static_cast<int>( std::floor(this->maskSize / 2) );
+	// ten znak mniejsze rowne zamienic na mniejsze, bo jak rowne, to ten przypadek to second maska suffix po prostu
+	for (auto affixMixMaskCenterIndex = indices.firstMask.center + 1; affixMixMaskCenterIndex <= indices.secondMask.center; ++affixMixMaskCenterIndex) {
+		auto currentMaskLeftIndex = std::clamp(affixMixMaskCenterIndex - maskOneHalfLength, indices.firstMask.left, indices.firstMask.right);
+		auto currentMaskRightIndex = std::clamp(affixMixMaskCenterIndex + maskOneHalfLength, indices.secondMask.left, indices.secondMask.right);
+
+		if( auto lastExtremumRow = indices.lastExtremaRow[affixMixMaskCenterIndex]; indices.top <= lastExtremumRow <= indices.bot){
+			auto prefixPartOfMaskExtremum = precalculations.prefixes[ getIndexPrefixFresh( indices, currentMaskLeftIndex, indices.firstMask.right, indices.bot ) ];
+			auto suffixPartOfMaskExtremum = precalculations.suffixes[ getIndexSuffixFresh( indices, indices.secondMask.left, currentMaskRightIndex, indices.bot ) ];
+
+			auto currentValue = this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum) ? prefixPartOfMaskExtremum : suffixPartOfMaskExtremum ;
+			auto previousValue = newImage.at<uchar>(indices.row - 1, affixMixMaskCenterIndex);
+			if( this->compare(currentValue, previousValue) ){
+				newImage.at<uchar>(indices.row, affixMixMaskCenterIndex) = currentValue;
+				indices.lastExtremaRow[affixMixMaskCenterIndex] = indices.row;
+			} else{
+				newImage.at<uchar>(indices.row, affixMixMaskCenterIndex) = previousValue;
+			}
+		}else{
+			auto prefixPartOfMaskExtremum = precalculations.prefixes[ getIndexPrefixFresh( indices, currentMaskLeftIndex, indices.firstMask.right, indices.top ) ];
+			auto suffixPartOfMaskExtremum = precalculations.suffixes[ getIndexSuffixFresh( indices, indices.secondMask.left, currentMaskRightIndex, indices.top ) ];
+
+			auto extremum = this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum) ? prefixPartOfMaskExtremum : suffixPartOfMaskExtremum ;
+			auto extremumRow = indices.top;
+			//Iterating from top row of mask up to bottom row of mask
+			for (auto row = indices.top + 1; row <= indices.bot; ++row) {
+				prefixPartOfMaskExtremum = precalculations.prefixes[ getIndexPrefixFresh( indices, currentMaskLeftIndex, indices.firstMask.right, row ) ];
+				suffixPartOfMaskExtremum = precalculations.suffixes[ getIndexSuffixFresh( indices, indices.secondMask.left, currentMaskRightIndex, row ) ];
+
+				if (this->compare(prefixPartOfMaskExtremum, suffixPartOfMaskExtremum)) {
+					if (this->compare(prefixPartOfMaskExtremum, extremum)) {
+						extremum = prefixPartOfMaskExtremum;
+						extremumRow = row;
+					}
+				}
+				else {
+					if (this->compare(suffixPartOfMaskExtremum, extremum)) {
+						extremum = suffixPartOfMaskExtremum;
+						extremumRow = row;
+					}
+				}
+			}
+			newImage.at<uchar>(indices.row, affixMixMaskCenterIndex) = extremum;
+			indices.lastExtremaRow[ affixMixMaskCenterIndex ] = extremumRow;
+		}
+	}
+}
+
+void SmartImageFilter::setFreshSuffixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation )
+{
+	if( auto lastExtremumRow = indices.lastExtremaRow[indices.secondMask.center]; indices.top <= lastExtremumRow <= indices.bot){
+		auto currentValue = precalculation[ getIndexPrefixFromRowToBeOverriden( indices, indices.secondMask.left, indices.secondMask.right ) ];
+		auto previousValue = newImage.at<uchar>(indices.row - 1, indices.firstMask.center);
+		if( this->compare(currentValue, previousValue) ){
+			newImage.at<uchar>(indices.row, indices.firstMask.center) = currentValue;
+			indices.lastExtremaRow[indices.firstMask.center] = indices.row;
+		} else{
+			newImage.at<uchar>(indices.row, indices.firstMask.center) = previousValue;
+		}
+	} else{
+		auto extremum = precalculation[ getIndexSuffixFresh(indices, indices.firstMask.left, indices.firstMask.right, indices.top) ];
+		auto extremumRow = indices.top;
+		for (auto row = indices.top + 1; row <= indices.bot; ++row) {
+			auto currentValue = precalculation[ getIndexSuffixFresh( indices, indices.firstMask.left, indices.firstMask.right, row ) ];
+			if (this->compare(currentValue, extremum)) {
+				extremum = currentValue;
+				extremumRow = row;
+			}
+		}
+		newImage.at<uchar>(indices.row, indices.firstMask.center) = extremum;
+		indices.lastExtremaRow[ indices.secondMask.center ] = extremumRow;
+	}
+}
+
+void SmartImageFilter::setFreshExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations )
+{
+	setFreshPrefixOnlyMaskExtremum( newImage, indices, precalculations.prefixes );
+	setFreshAffixMixMaskExtrema( newImage, indices, precalculations );
+	setFreshSuffixOnlyMaskExtremum( newImage, indices, precalculations.suffixes );
+}
+
 void SmartImageFilter::updateRowColumnAndIndex( int& row, int& column, int& index )
 {
 	auto valueToIterate = this->maskSize + 1;
 	column += valueToIterate;  // Move to next mask position
 
 	if (column >= this->data.cols) {  // Check if we need to transition to a new row
-		row++;
+		++row;
+		column = 0;
+		index = row * this->data.cols;  // Move to the first column of the new row
+	}
+	else {
+		index += valueToIterate;
+	}
+}
+
+void SmartImageFilter::updateRowColumnAndIndices( int& row, int& column, int& index, Indices& indices )
+{
+	auto valueToIterate = this->maskSize + 1;
+	column += valueToIterate;  // Move to next mask position
+
+	if (column >= this->data.cols) {  // Check if we need to transition to a new row
+		++row;
+		if(++indices.rowToBeOverriden == this->maskSize){
+			indices.rowToBeOverriden = 0;
+		}
 		column = 0;
 		index = row * this->data.cols;  // Move to the first column of the new row
 	}
@@ -228,19 +421,57 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	auto initRow = firstIndex / this->data.cols;
 	auto row = initRow;
 	auto column = firstIndex - (row * this->data.cols);
-	auto indices = Indices{{ static_cast<long unsigned int>(this->data.cols), {-1, -1}}};
+	auto indices = Indices{};
+	indices.lastExtremaRow.reserve(this->data.cols);
+	indices.rowToBeOverriden = 0;
+		
+	// In this approach, I'm trying to mix the naive with smart approach,
+	// smart approach is applied for each consecutive masks in columns - precalculating prefixes and suffixes,
+	// but when we move to the next row, there might be a possiblity that we don't need to precalculate the whole height of a mask.
+	// We might only need to check the newly added row. To decide, we need to keep the row index of last extremum
+	// and check whether it is out of current mask. If so, we need to go through the precalculations, updated with a new row precalculation
+	// and find the extremum. If not, we need to look up the value in the row above, not in the precalculations - in the image itself,
+	// because it should store the extremum, and compare with the new precalculation
+	//
+	// There should be 3 different cases to consider, when iterating the image (part of image in case of multithreading):
+	// 1. First row (or first two rows, if we dont start at column 0), where we do each precalculations
+	//		- we do each precalculations, because it is our start for next rows and in case of not starting at column 0,
+	//		  first column does not help in calculating middle rows, because it has masks at different indexes than these rows
+	//		  starting at 0
+	// 2. Middle rows, where we apply the naive algorithm explained in the description above
+	// 3. End row, where we need to calculate last 2 masks differently, because once again, similarly to first row, we might end not at the last column
+	// 
+	// In 2. case, I will update the precalculations by just moving them one row up in the precalculations container and putting new row into the free space 
+	
 	// "i" is always the centre of first mask
-	for (auto i = firstIndex; i <= lastIndex; ) {
+	// 1. case
+	auto i = firstIndex;
+	auto breakInitRows = column == 0 ? row + 1 : row + 2;
+	for (; i <= lastIndex && row != breakInitRows; ) {
 		updateIndices(indices, row, column);
 
-		if( auto& extremumCoordinates = indices.extremaCoordinates.at(i); extremumCoordinates.row ){
-
-		}
 		precalculate( indices, affixesPrecalculations );
 		setExtrema( newImage, indices, affixesPrecalculations );
 
-		updateRowColumnAndIndex( row, column , i);
-		affixesPrecalculations.prefixes.clear();
-		affixesPrecalculations.suffixes.clear();
+		updateRowColumnAndIndex( row, column, i);
+	}
+
+	// 2. case
+	for (; i <= lastIndex; ) {
+		updateIndices(indices, row, column);
+
+		precalculateFreshRow( indices, affixesPrecalculations );
+		setFreshExtrema( newImage, indices, affixesPrecalculations );
+
+		updateRowColumnAndIndices( row, column, i, indices);
+	}
+
+	for (; i <= lastIndex; ) {
+		updateIndices(indices, row, column);
+
+		precalculate( indices, affixesPrecalculations );
+		setExtrema( newImage, indices, affixesPrecalculations );
+
+		updateRowColumnAndIndex(row, column, i);
 	}
 }

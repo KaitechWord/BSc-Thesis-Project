@@ -4,14 +4,9 @@
 
 class SmartImageFilter : public ImageFilter {
 
-struct Coordinates{
-	int row;
-	int column;
-};
-
 struct Indices
 {
-	std::vector< Coordinates > extremaCoordinates;
+	std::vector< int > lastExtremaRow;
 	struct MaskIndices
 	{
 		int left;
@@ -21,6 +16,7 @@ struct Indices
 	int top;
 	int bot;
 	int row;
+	int rowToBeOverriden;
 	
 };
 using Precalculation = std::vector<int>;
@@ -46,15 +42,31 @@ private:
 	void precalculate( const Indices& indices, Precalculations& precalculations );
 	void precalculateOnlyLast( const Indices& indices, Precalculations& precalculations );
 
-	void setPrefixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation );
+	void setPrefixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation );
 
-	void setAffixMixMaskExtrema( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations );
+	void setAffixMixMaskExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations );
 
-	void setSuffixOnlyMaskExtremum( cv::Mat& newImage, const Indices& indices, Precalculation& precalculation );
+	void setSuffixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation );
 
-	void setExtrema( cv::Mat& newImage, const Indices& indices, Precalculations& precalculations );
+	void setExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations );
 
 	void updateRowColumnAndIndex( int& row, int& column, int& index );
 
 	void updateIndices( Indices& indices, int row, int column );
+
+
+
+	//FRESH
+	void updateRowColumnAndIndices( int& row, int& column, int& index, Indices& indices );
+	void setFreshExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations );
+	void setFreshSuffixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation );
+	void setFreshAffixMixMaskExtrema( cv::Mat& newImage, Indices& indices, Precalculations& precalculations );
+	void setFreshPrefixOnlyMaskExtremum( cv::Mat& newImage, Indices& indices, Precalculation& precalculation );
+	int getIndexSuffixFresh(const Indices& indices, int left, int right, int row);
+	int getIndexPrefixFresh(const Indices& indices, int left, int right, int row);
+	int getIndexSuffixFromRowToBeOverriden(const Indices& indices, int left, int right);
+	int getIndexPrefixFromRowToBeOverriden(const Indices& indices, int left, int right);
+	void precalculateFreshRow( const Indices& indices, Precalculations& precalculations );
+	void calculateFreshSuffixes( const Indices& indices, Precalculation& precalculation, int row );
+	void calculateFreshPrefixes( const Indices& indices, Precalculation& precalculation, int row );
 };
