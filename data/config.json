@@ -7,9 +7,9 @@
                         "MaskSize": 5
                     },
     "ImageFilter": {
-                        "Variant": "MIN",
-                        "Approach": "SMART",
-                        "DataPath": "/data/lena-male.png",
-                        "MaskSize": 5
+                        "Variant": "MAX",
+                        "Approach": "NAIVE",
+                        "DataPath": "/data/bimberek.jpg",
+                        "MaskSize": 21
                     }
 }
