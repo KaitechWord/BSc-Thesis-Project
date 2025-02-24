@@ -18,12 +18,6 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	this->data = image;
 	auto rows = image.rows;
 	auto cols = image.cols;
-	for(int row = 0; row < rows; ++row){
-		for(int col = 0; col < cols; ++col){
-			std::cout << static_cast<int>( image.at<uchar>(row, col) ) << ", ";
-		}
-		std::cout << std::endl;
-	}
 	auto pixelsNum = rows * cols;
 	auto threadsNum = this->threadNum;
 	if (threadsNum > pixelsNum) {
@@ -62,27 +56,19 @@ void SmartImageFilter::apply(cv::Mat& image) {
 			image.at<uchar>(j / colSize, j % colSize) = newImage.at<uchar>(j / colSize, j % colSize);
 		}
 	}
-	std::cout << std::endl;
-	std::cout << std::endl;
 	outfile.close();
-	for(int row = 0; row < rows; ++row){
-		for(int col = 0; col < cols; ++col){
-			std::cout << static_cast<int>( newImage.at<uchar>(row, col) ) << ", ";
-		}
-		std::cout << std::endl;
-	}
 }
 
 int SmartImageFilter::getIndexPrefix( const Indices& indices, int left, int right, int row ){
-	auto relativeLeft = left - indices.firstMask.left;
-	auto relativeRight = right - indices.firstMask.left;
+	auto relativeLeft = left;
+	auto relativeRight = right;
 	auto relativeRow = row - indices.top;
 	return this->maskSize * this->maskSize * relativeLeft + this->maskSize * relativeRight + relativeRow;
 }
 
 int SmartImageFilter::getIndexSuffix( const Indices& indices, int left, int right, int row ){
-	auto relativeLeft = left - indices.secondMask.left;
-	auto relativeRight = right - indices.secondMask.left;
+	auto relativeLeft = left;
+	auto relativeRight = right;
 	auto relativeRow = row - indices.top;
 	return this->maskSize * this->maskSize * relativeLeft + this->maskSize * relativeRight + relativeRow;
 }
@@ -225,20 +211,20 @@ void SmartImageFilter::setExtrema( cv::Mat& newImage, Indices& indices, Precalcu
 }
 
 int SmartImageFilter::getIndexPrefixFromRowToBeOverriden(const Indices& indices, int left, int right){
-	auto relativeLeft = left - indices.firstMask.left;
-	auto relativeRight = right - indices.firstMask.left;
+	auto relativeLeft = left;
+	auto relativeRight = right;
 	return this->maskSize * this->maskSize * relativeLeft + this->maskSize * relativeRight + indices.rowToBeOverriden;
 }
 
 int SmartImageFilter::getIndexSuffixFromRowToBeOverriden(const Indices& indices, int left, int right){
-	auto relativeLeft = left - indices.secondMask.left;
-	auto relativeRight = right - indices.secondMask.left;
+	auto relativeLeft = left;
+	auto relativeRight = right;
 	return this->maskSize * this->maskSize * relativeLeft + this->maskSize * relativeRight + indices.rowToBeOverriden;
 }
 
 int SmartImageFilter::getIndexPrefixFresh(const Indices& indices, int left, int right, int row){
-	auto relativeLeft = left - indices.firstMask.left;
-	auto relativeRight = right - indices.firstMask.left;
+	auto relativeLeft = left;
+	auto relativeRight = right;
 	auto relativeRow = row - indices.top;
 	auto relativeRowWithOverridenOffset = relativeRow + indices.rowToBeOverriden + 1;
 	if(relativeRowWithOverridenOffset >= this->maskSize){
@@ -248,8 +234,8 @@ int SmartImageFilter::getIndexPrefixFresh(const Indices& indices, int left, int 
 }
 
 int SmartImageFilter::getIndexSuffixFresh(const Indices& indices, int left, int right, int row){
-	auto relativeLeft = left - indices.secondMask.left;
-	auto relativeRight = right - indices.secondMask.left;
+	auto relativeLeft = left;
+	auto relativeRight = right;
 	auto relativeRow = row - indices.top;
 	auto relativeRowWithOverridenOffset = relativeRow + indices.rowToBeOverriden + 1;
 	if(relativeRowWithOverridenOffset >= this->maskSize){
