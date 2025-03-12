@@ -1,5 +1,5 @@
 {
-    "ThreadsNumber": 1,
+    "ThreadsNumber": 5,
     "SignalFilter": {
                         "Variant": "MIN",
                         "Approach": "NAIVE",
@@ -8,8 +8,8 @@
                     },
     "ImageFilter": {
                         "Variant": "MAX",
-                        "Approach": "NAIVE",
+                        "Approach": "SMART",
                         "DataPath": "/data/bimberek.jpg",
-                        "MaskSize": 21
+                        "MaskSize": 25
                     }
 }
