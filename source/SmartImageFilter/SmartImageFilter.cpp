@@ -38,8 +38,10 @@ void SmartImageFilter::apply(cv::Mat& image) {
 	for (auto& thread : threads)
 		thread.join();
 	auto end = std::chrono::high_resolution_clock::now();
-	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " filter execution time : " << std::chrono::duration<double, std::milli>(end - start).count() << "ms.\n";
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
+    std::cout << std::fixed;
+    std::cout << std::setprecision(2);
+	std::cout << "Smart " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " MaskSize: " << this->maskSize << " filter execution time : " << execTime << "ms.\n Elem./sec.: " << (this->data.cols * this->data.rows / std::chrono::duration<double, std::milli>(end - start).count()) * 0.001 << "\n";
 	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
 	std::ofstream outfile;
 	outfile.open(textFile, std::ios_base::app);
@@ -399,11 +401,11 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 	auto indices = Indices{};
 	cv::Mat indirect{ newImage.size(), newImage.type() };
 
-	auto maskOneHalfLength = static_cast<int>( std::floor(this->maskSize / 2) );
-	auto initRowColumn = std::max( initRow - maskOneHalfLength, 0 );
-	auto initColColumn = std::max( initCol - maskOneHalfLength, 0 );
-	auto lastRowColumn = std::min( lastRow + maskOneHalfLength, this->data.rows - 1 );
-	auto lastColColumn = std::min( lastCol + maskOneHalfLength, this->data.cols - 1 );
+	auto padding = 2*this->maskSize;
+	auto initRowColumn = std::max( initRow - padding, 0 );
+	auto initColColumn = std::max( initCol - padding, 0 );
+	auto lastRowColumn = std::min( lastRow + padding, this->data.rows - 1 );
+	auto lastColColumn = std::min( lastCol + padding, this->data.cols - 1 );
 	auto firstIndexColumn = initRowColumn * this->data.cols + initColColumn;
 	auto lastIndexColumn = lastRowColumn * this->data.cols + lastColColumn;
 
@@ -431,8 +433,16 @@ void SmartImageFilter::filter(cv::Mat& newImage, int firstIndex, int lastIndex) 
 		{
 			row += this->maskSize + 1;
 
-			if (row >= lastRow || ( column > lastCol && row >= ( lastRow - 1 ) ) ) {
-				if( --column < initCol  )
+			if (row > lastRow) {
+				--column;
+				if( column < initCol  )
+					row = initRow + 1;
+				else
+					row = initRow;
+			}
+			else if ( column > lastCol && row > ( lastRow - 1 ) ) {
+				--column;
+				if( column < initCol )
 					row = initRow + 1;
 				else
 					row = initRow;
