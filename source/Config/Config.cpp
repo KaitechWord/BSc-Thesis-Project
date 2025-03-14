@@ -52,6 +52,9 @@ void Config::verifyInfo(FilterInfo& filterInfo, std::string& variant, std::strin
 	else if (approach == "SMART") {
 		filterInfo.approach = FilterApproach::SMART;
 	}
+	else if (approach == "MIX") {
+		filterInfo.approach = FilterApproach::MIX;
+	}
 	else {
 		std::cout << "Unexpected approach type.\nAccepted possibilities are: naive / smart\nSetting it to SMART.\n";
 		filterInfo.approach = FilterApproach::SMART;

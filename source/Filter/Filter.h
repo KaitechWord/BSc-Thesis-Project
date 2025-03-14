@@ -9,6 +9,7 @@ enum class AlgorithmType{
 
 enum class FilterApproach{
     NAIVE,
+    MIX,
     SMART
 };
 
