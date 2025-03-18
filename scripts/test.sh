@@ -1,97 +1,20 @@
 #!/bin/sh
 # threads min/max naive/mix/smart datapath maskSize
-# min naive
-./bin/Image 1 0 0 ./data/10xLakeMountain.jpg 5
-./bin/Image 1 0 0 ./data/10xLakeMountain.jpg 15
-./bin/Image 1 0 0 ./data/10xLakeMountain.jpg 25
-./bin/Image 1 0 0 ./data/10xLakeMountain.jpg 35
-./bin/Image 1 0 0 ./data/10xLakeMountain.jpg 45
-./bin/Image 1 0 0 ./data/10xLakeMountain.jpg 55
 
-# max naive
-./bin/Image 1 1 0 ./data/10xLakeMountain.jpg 5
-./bin/Image 1 1 0 ./data/10xLakeMountain.jpg 15
-./bin/Image 1 1 0 ./data/10xLakeMountain.jpg 25
-./bin/Image 1 1 0 ./data/10xLakeMountain.jpg 35
-./bin/Image 1 1 0 ./data/10xLakeMountain.jpg 45
-./bin/Image 1 1 0 ./data/10xLakeMountain.jpg 55
+data_path=./data/10xLakeMountain.jpg
 
-# min mix
-./bin/Image 1 0 1 ./data/10xLakeMountain.jpg 5
-./bin/Image 1 0 1 ./data/10xLakeMountain.jpg 15
-./bin/Image 1 0 1 ./data/10xLakeMountain.jpg 25
-./bin/Image 1 0 1 ./data/10xLakeMountain.jpg 35
-./bin/Image 1 0 1 ./data/10xLakeMountain.jpg 45
-./bin/Image 1 0 1 ./data/10xLakeMountain.jpg 55
-
-# max mix
-./bin/Image 1 1 1 ./data/10xLakeMountain.jpg 5
-./bin/Image 1 1 1 ./data/10xLakeMountain.jpg 15
-./bin/Image 1 1 1 ./data/10xLakeMountain.jpg 25
-./bin/Image 1 1 1 ./data/10xLakeMountain.jpg 35
-./bin/Image 1 1 1 ./data/10xLakeMountain.jpg 45
-./bin/Image 1 1 1 ./data/10xLakeMountain.jpg 55
-
-# min smart
-./bin/Image 1 0 2 ./data/10xLakeMountain.jpg 5
-./bin/Image 1 0 2 ./data/10xLakeMountain.jpg 15
-./bin/Image 1 0 2 ./data/10xLakeMountain.jpg 25
-./bin/Image 1 0 2 ./data/10xLakeMountain.jpg 35
-./bin/Image 1 0 2 ./data/10xLakeMountain.jpg 45
-./bin/Image 1 0 2 ./data/10xLakeMountain.jpg 55
-
-# max smart
-./bin/Image 1 1 2 ./data/10xLakeMountain.jpg 5
-./bin/Image 1 1 2 ./data/10xLakeMountain.jpg 15
-./bin/Image 1 1 2 ./data/10xLakeMountain.jpg 25
-./bin/Image 1 1 2 ./data/10xLakeMountain.jpg 35
-./bin/Image 1 1 2 ./data/10xLakeMountain.jpg 45
-./bin/Image 1 1 2 ./data/10xLakeMountain.jpg 55
-
-# min naive
-./bin/Image 5 0 0 ./data/10xLakeMountain.jpg 5
-./bin/Image 5 0 0 ./data/10xLakeMountain.jpg 15
-./bin/Image 5 0 0 ./data/10xLakeMountain.jpg 25
-./bin/Image 5 0 0 ./data/10xLakeMountain.jpg 35
-./bin/Image 5 0 0 ./data/10xLakeMountain.jpg 45
-./bin/Image 5 0 0 ./data/10xLakeMountain.jpg 55
-
-# max naive
-./bin/Image 5 1 0 ./data/10xLakeMountain.jpg 5
-./bin/Image 5 1 0 ./data/10xLakeMountain.jpg 15
-./bin/Image 5 1 0 ./data/10xLakeMountain.jpg 25
-./bin/Image 5 1 0 ./data/10xLakeMountain.jpg 35
-./bin/Image 5 1 0 ./data/10xLakeMountain.jpg 45
-./bin/Image 5 1 0 ./data/10xLakeMountain.jpg 55
-
-# min mix
-./bin/Image 5 0 1 ./data/10xLakeMountain.jpg 5
-./bin/Image 5 0 1 ./data/10xLakeMountain.jpg 15
-./bin/Image 5 0 1 ./data/10xLakeMountain.jpg 25
-./bin/Image 5 0 1 ./data/10xLakeMountain.jpg 35
-./bin/Image 5 0 1 ./data/10xLakeMountain.jpg 45
-./bin/Image 5 0 1 ./data/10xLakeMountain.jpg 55
-
-# max mix
-./bin/Image 5 1 1 ./data/10xLakeMountain.jpg 5
-./bin/Image 5 1 1 ./data/10xLakeMountain.jpg 15
-./bin/Image 5 1 1 ./data/10xLakeMountain.jpg 25
-./bin/Image 5 1 1 ./data/10xLakeMountain.jpg 35
-./bin/Image 5 1 1 ./data/10xLakeMountain.jpg 45
-./bin/Image 5 1 1 ./data/10xLakeMountain.jpg 55
-
-# min smart
-./bin/Image 5 0 2 ./data/10xLakeMountain.jpg 5
-./bin/Image 5 0 2 ./data/10xLakeMountain.jpg 15
-./bin/Image 5 0 2 ./data/10xLakeMountain.jpg 25
-./bin/Image 5 0 2 ./data/10xLakeMountain.jpg 35
-./bin/Image 5 0 2 ./data/10xLakeMountain.jpg 45
-./bin/Image 5 0 2 ./data/10xLakeMountain.jpg 55
-
-# max smart
-./bin/Image 5 1 2 ./data/10xLakeMountain.jpg 5
-./bin/Image 5 1 2 ./data/10xLakeMountain.jpg 15
-./bin/Image 5 1 2 ./data/10xLakeMountain.jpg 25
-./bin/Image 5 1 2 ./data/10xLakeMountain.jpg 35
-./bin/Image 5 1 2 ./data/10xLakeMountain.jpg 45
-./bin/Image 5 1 2 ./data/10xLakeMountain.jpg 55
+echo $(date '+%Y-%m-%d %H:%M:%S\n') | tee -a TEST_RESULTS.txt
+for threads_num in 1 2 3 4 5 6
+do
+ for approach in 0 1 2
+ do
+  for variant in 0 1
+  do
+   for mask_size in 5 15 25 35 45 55
+   do
+    ./bin/Image $threads_num $variant $approach $data_path $mask_size | tee -a TEST_RESULTS.txt
+   done
+  done
+ done
+done
+echo '' | tee -a TEST_RESULTS.txt

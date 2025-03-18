@@ -41,7 +41,7 @@ void MixImageFilter::apply(cv::Mat& image) {
 	const auto execTime = std::chrono::duration<double, std::milli>(end - start).count();
 	std::cout << std::fixed;
 	std::cout << std::setprecision(2);
-	std::cout << "Mix " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image " << (threadsNum == 1 ? "(single-threaded)" : "(multi-threaded)") << " MaskSize: " << this->maskSize << " filter execution time : " << execTime << "ms.\n Elem./sec.: " << (this->data.cols * this->data.rows / std::chrono::duration<double, std::milli>(end - start).count()) * 0.001 << "\n";
+	std::cout << "Mix " << (this->algType == AlgorithmType::MIN ? "min." : "max.") << " image. " << "Threads: " << threadsNum << ". MaskSize: " << this->maskSize << ". Filter execution time : " << execTime << "ms.\n Elem./sec.: " << (this->data.cols * this->data.rows / std::chrono::duration<double, std::milli>(end - start).count()) * 0.001 << "\n";
 	const auto textFile = this->algType == AlgorithmType::MIN ? (threadsNum == 1 ? minSingleTextFile : minMultiTextFile) : (threadsNum == 1 ? maxSingleTextFile : maxMultiTextFile);
 	std::ofstream outfile;
 	outfile.open(textFile, std::ios_base::app);
